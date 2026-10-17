@@ -405,7 +405,7 @@ const UI = {
     introTitle: "Oppskrifter i ruter",
     intro: "Hver oppskrift er en tabell. Ingrediensene står nedover, trinnene går bortover, og hvert trinn dekker ingrediensene det bruker. Da ser du med en gang hva som skal blandes når.",
     cats: { bake: "Bakst", dinner: "Middag" },
-    groups: { cakes: "Kaker og desserter", yeast: "Gjærbakst", stews: "Supper og gryter", pan: "Panneretter" },
+    groups: { cakes: "Søtbakst", yeast: "Brød og rundstykker", stews: "Supper og gryter", pan: "Panneretter" },
     seasonTitle: "Sesongbakst",
     back: "Alle oppskrifter", prev: "Forrige", next: "Neste",
     howto: "Les fra venstre mot høyre. Hvert trinn dekker ingrediensene det bruker.",
@@ -421,7 +421,7 @@ const UI = {
     introTitle: "Recipes on a grid",
     intro: "Rutekokeboka is Norwegian for “the grid cookbook”. Every recipe is a table: ingredients run down the side, steps run across, and each step spans the ingredients it uses. You can see at a glance what goes together when.",
     cats: { bake: "Baking", dinner: "Dinner" },
-    groups: { cakes: "Cakes and desserts", yeast: "Breads and buns", stews: "Soups and stews", pan: "From the pan" },
+    groups: { cakes: "Sweet baking", yeast: "Breads and buns", stews: "Soups and stews", pan: "From the pan" },
     seasonTitle: "Seasonal baking",
     back: "All recipes", prev: "Previous", next: "Next",
     howto: "Read left to right. Each step spans the ingredients it uses.",
@@ -437,68 +437,6 @@ const UI = {
    ing:   one row per ingredient. Amounts are for the base yield; perCup = grams per US cup, perLb = show pounds (English only).
    steps: col = step number, from/to = first and last ingredient row the step covers. */
 const RECIPES = [
-  {
-    id: "hveteboller", cat: "bake", group: "yeast",
-    yield: { base: 20, step: 5 },
-    vars: (f, L) => {
-      const q = spoon(f);
-      return {
-        yeast: grams(50 * f),
-        dry: grams(12 * f),
-        dryTsp: spoon(4 * f).text + NB + L.u.tsp,
-        packets: q.text + NB + (L.lang === "nb" ? (q.value >= 2 ? "poser" : "pose") : (q.value > 1 ? "packets" : "packet")),
-        flour: grams(750 * f)
-      };
-    },
-    ing: [
-      { kind: "liquid", ml: 500, no: "melk", en: "milk" },
-      { kind: "g", g: 150, perCup: 227, no: "smør", en: "butter" },
-      { kind: "g", g: 125, perCup: 200, no: "sukker", en: "sugar" },
-      { kind: "g", g: 50, no: "fersk gjær", en: "fresh yeast" },
-      { kind: "g", g: [750, 850], perCup: 125, no: "hvetemel", en: "all-⁠purpose flour" },
-      { kind: "tsp", v: 1, no: "malt kardemomme", en: "ground cardamom" },
-      { kind: "tsp", v: 0.5, no: "salt", en: "salt" },
-      { kind: "g", g: 150, perCup: 150, optional: true, no: "rosiner eller sjokolade (valgfritt)", en: "raisins or chocolate (optional)" },
-      { kind: "count", v: 1, no: "egg (til pensling)", en: "egg (for brushing)" },
-      { kind: "tbsp", v: 1, no: "melk (til pensling)", en: "milk (for brushing)" }
-    ],
-    steps: [
-      { col: 1, from: 0, to: 2, kind: "prep", no: "Varm opp til smøret er smeltet, avkjøl til fingervarm", en: "Heat until the butter melts, then cool to finger-warm", tags: [{ no: "ca. 37 °C", en: "37 °C / 98 °F" }] },
-      { col: 2, from: 0, to: 3, kind: "main", no: "Rør ut gjæren i væsken", en: "Stir the yeast into the liquid" },
-      { col: 2, from: 4, to: 6, kind: "prep", no: "Bland det tørre", en: "Mix the dry ingredients" },
-      { col: 3, from: 0, to: 6, kind: "main", no: "Elt til en smidig deig", en: "Knead to a smooth, elastic dough", tags: [{ no: "ca. 10 min", en: "about 10 min" }] },
-      { col: 4, from: 0, to: 6, kind: "main", no: "Hev tildekket", en: "Cover and let rise", tags: ["30–45 min"] },
-      { col: 5, from: 0, to: 7, kind: "main", pre: { no: "(Valgfritt: elt inn rosiner eller sjokolade)", en: "(Optional: knead in raisins or chocolate)" }, no: "Del i ca. {n} {n|emne|emner}, trill runde boller og legg på stekeplate med bakepapir", en: "Divide into about {n} {n|piece|pieces}, roll into balls, place on lined baking sheets", tags: [{ no: "ca. 80 g per bolle", en: "≈ 80 g each" }] },
-      { col: 6, from: 0, to: 7, kind: "main", no: "Etterhev", en: "Let rise again", tags: ["40–60 min"] },
-      { col: 6, from: 8, to: 9, kind: "prep", no: "Visp sammen", en: "Whisk together" },
-      { col: 7, from: 0, to: 9, kind: "main", no: "Pensle bollene", en: "Brush the buns" },
-      { col: 8, from: 0, to: 9, kind: "main", no: "Stek midt i ovnen til de er gylne", en: "Bake in the middle of the oven until golden", tags: [{ no: "220 °C", en: "220 °C / 425 °F" }, { no: "ca. 10 min", en: "about 10 min" }] },
-      { col: 9, from: 0, to: 9, kind: "final", no: "Avkjøl på rist", en: "Cool on a rack" }
-    ],
-    no: {
-      title: "Hveteboller", sub: "Myke norske boller med kardemomme", main: "Deigen",
-      unit: "boller", count: "Antall boller", time: "Ca. 2 t",
-      facts: ["Ca. {n} {n|bolle|boller}", "Ca. 2 timer inkl. heving", "Ovn 220 °C"],
-      tips: [
-        ["Tørrgjær.", "Bytt ut {yeast} fersk gjær med {packets} ({dry}) tørrgjær. Bland den med melet i stedet for i væsken."],
-        ["Mel.", "Start med {flour} og tilsett mer ved behov. Deigen skal slippe bollen og være myk, men ikke klissete."],
-        ["Temperatur.", "For varm væske dreper gjæren, så fingervarm er nok. Med varmluft senker du ovnen til ca. 200 °C."],
-        ["Varianter.", "Rosiner eller sjokolade eltes inn når du former bollene (trinn 5). Du kan også drysse perlesukker over etter pensling. Bollene fryser godt."]
-      ]
-    },
-    en: {
-      title: "Hveteboller", sub: "Norwegian cardamom buns", main: "Dough",
-      unit: "buns", count: "Number of buns", time: "About 2 h",
-      facts: ["Makes about {n}", "About 2 hours incl. rising", "Oven 220 °C / 425 °F"],
-      tips: [
-        ["Dry yeast.", "Replace the {yeast} fresh yeast with {dry} (about {dryTsp}) instant yeast. Mix it into the flour instead of the liquid."],
-        ["Flour.", "Start with {flour} and add more as needed. The dough should pull away from the bowl and feel soft but not sticky."],
-        ["Temperature.", "Liquid that is too hot kills the yeast, so finger-warm is enough. In a fan oven, lower the heat to about 200 °C (400 °F)."],
-        ["Variations.", "Raisins or chocolate are kneaded in when you shape the buns (step 5). You can also sprinkle pearl sugar on top after brushing. The buns freeze well."]
-      ]
-    }
-  },
-
   {
     id: "vafler", cat: "bake", group: "cakes",
     yield: { base: 10, step: 2 },
@@ -686,6 +624,68 @@ const RECIPES = [
         ["Baker's ammonia.", "Baker's ammonia (hornsalt) makes the biscuits extra crisp. If you don't have it, use the same amount of baking soda."],
         ["Chocolate.", "Milk or dark chocolate both work. Melt it over a water bath or in the microwave on low power, stirring often."],
         ["Storage.", "The biscuits stay crisp in an airtight tin."]
+      ]
+    }
+  },
+
+  {
+    id: "hveteboller", cat: "bake", group: "cakes",
+    yield: { base: 20, step: 5 },
+    vars: (f, L) => {
+      const q = spoon(f);
+      return {
+        yeast: grams(50 * f),
+        dry: grams(12 * f),
+        dryTsp: spoon(4 * f).text + NB + L.u.tsp,
+        packets: q.text + NB + (L.lang === "nb" ? (q.value >= 2 ? "poser" : "pose") : (q.value > 1 ? "packets" : "packet")),
+        flour: grams(750 * f)
+      };
+    },
+    ing: [
+      { kind: "liquid", ml: 500, no: "melk", en: "milk" },
+      { kind: "g", g: 150, perCup: 227, no: "smør", en: "butter" },
+      { kind: "g", g: 125, perCup: 200, no: "sukker", en: "sugar" },
+      { kind: "g", g: 50, no: "fersk gjær", en: "fresh yeast" },
+      { kind: "g", g: [750, 850], perCup: 125, no: "hvetemel", en: "all-⁠purpose flour" },
+      { kind: "tsp", v: 1, no: "malt kardemomme", en: "ground cardamom" },
+      { kind: "tsp", v: 0.5, no: "salt", en: "salt" },
+      { kind: "g", g: 150, perCup: 150, optional: true, no: "rosiner eller sjokolade (valgfritt)", en: "raisins or chocolate (optional)" },
+      { kind: "count", v: 1, no: "egg (til pensling)", en: "egg (for brushing)" },
+      { kind: "tbsp", v: 1, no: "melk (til pensling)", en: "milk (for brushing)" }
+    ],
+    steps: [
+      { col: 1, from: 0, to: 2, kind: "prep", no: "Varm opp til smøret er smeltet, avkjøl til fingervarm", en: "Heat until the butter melts, then cool to finger-warm", tags: [{ no: "ca. 37 °C", en: "37 °C / 98 °F" }] },
+      { col: 2, from: 0, to: 3, kind: "main", no: "Rør ut gjæren i væsken", en: "Stir the yeast into the liquid" },
+      { col: 2, from: 4, to: 6, kind: "prep", no: "Bland det tørre", en: "Mix the dry ingredients" },
+      { col: 3, from: 0, to: 6, kind: "main", no: "Elt til en smidig deig", en: "Knead to a smooth, elastic dough", tags: [{ no: "ca. 10 min", en: "about 10 min" }] },
+      { col: 4, from: 0, to: 6, kind: "main", no: "Hev tildekket", en: "Cover and let rise", tags: ["30–45 min"] },
+      { col: 5, from: 0, to: 7, kind: "main", pre: { no: "(Valgfritt: elt inn rosiner eller sjokolade)", en: "(Optional: knead in raisins or chocolate)" }, no: "Del i ca. {n} {n|emne|emner}, trill runde boller og legg på stekeplate med bakepapir", en: "Divide into about {n} {n|piece|pieces}, roll into balls, place on lined baking sheets", tags: [{ no: "ca. 80 g per bolle", en: "≈ 80 g each" }] },
+      { col: 6, from: 0, to: 7, kind: "main", no: "Etterhev", en: "Let rise again", tags: ["40–60 min"] },
+      { col: 6, from: 8, to: 9, kind: "prep", no: "Visp sammen", en: "Whisk together" },
+      { col: 7, from: 0, to: 9, kind: "main", no: "Pensle bollene", en: "Brush the buns" },
+      { col: 8, from: 0, to: 9, kind: "main", no: "Stek midt i ovnen til de er gylne", en: "Bake in the middle of the oven until golden", tags: [{ no: "220 °C", en: "220 °C / 425 °F" }, { no: "ca. 10 min", en: "about 10 min" }] },
+      { col: 9, from: 0, to: 9, kind: "final", no: "Avkjøl på rist", en: "Cool on a rack" }
+    ],
+    no: {
+      title: "Hveteboller", sub: "Myke norske boller med kardemomme", main: "Deigen",
+      unit: "boller", count: "Antall boller", time: "Ca. 2 t",
+      facts: ["Ca. {n} {n|bolle|boller}", "Ca. 2 timer inkl. heving", "Ovn 220 °C"],
+      tips: [
+        ["Tørrgjær.", "Bytt ut {yeast} fersk gjær med {packets} ({dry}) tørrgjær. Bland den med melet i stedet for i væsken."],
+        ["Mel.", "Start med {flour} og tilsett mer ved behov. Deigen skal slippe bollen og være myk, men ikke klissete."],
+        ["Temperatur.", "For varm væske dreper gjæren, så fingervarm er nok. Med varmluft senker du ovnen til ca. 200 °C."],
+        ["Varianter.", "Rosiner eller sjokolade eltes inn når du former bollene (trinn 5). Du kan også drysse perlesukker over etter pensling. Bollene fryser godt."]
+      ]
+    },
+    en: {
+      title: "Hveteboller", sub: "Norwegian cardamom buns", main: "Dough",
+      unit: "buns", count: "Number of buns", time: "About 2 h",
+      facts: ["Makes about {n}", "About 2 hours incl. rising", "Oven 220 °C / 425 °F"],
+      tips: [
+        ["Dry yeast.", "Replace the {yeast} fresh yeast with {dry} (about {dryTsp}) instant yeast. Mix it into the flour instead of the liquid."],
+        ["Flour.", "Start with {flour} and add more as needed. The dough should pull away from the bowl and feel soft but not sticky."],
+        ["Temperature.", "Liquid that is too hot kills the yeast, so finger-warm is enough. In a fan oven, lower the heat to about 200 °C (400 °F)."],
+        ["Variations.", "Raisins or chocolate are kneaded in when you shape the buns (step 5). You can also sprinkle pearl sugar on top after brushing. The buns freeze well."]
       ]
     }
   },
@@ -977,6 +977,145 @@ const RECIPES = [
   },
 
   {
+    id: "focaccia", cat: "bake", group: "yeast",
+    yield: { base: 12, step: 4 },
+    vars: (f) => ({ pw: String(Math.round(25 * Math.sqrt(f))), pl: String(Math.round(35 * Math.sqrt(f))) }),
+    ing: [
+      { kind: "liquid", ml: 300, no: "vann", en: "water" },
+      { kind: "g", g: 25, no: "fersk gjær", en: "fresh yeast" },
+      { kind: "g", g: 350, perCup: 125, no: "hvetemel", en: "all-⁠purpose flour" },
+      { kind: "g", g: 150, no: "durumhvetemel", en: "durum wheat flour" },
+      { kind: "g", g: 15, no: "salt", en: "salt" },
+      { kind: "tbsp", v: 1, no: "honning", en: "honey" },
+      { kind: "tbsp", v: 5, no: "olivenolje", en: "olive oil" },
+      { kind: "count", v: 2, no: ["kvist rosmarin", "kvister rosmarin"], en: ["sprig of rosemary", "sprigs of rosemary"] },
+      { kind: "tsp", v: 1, no: "flaksalt", en: "flaky salt" }
+    ],
+    steps: [
+      { col: 1, from: 0, to: 1, kind: "main", no: "Varm vannet og rør ut gjæren", en: "Warm the water and dissolve the yeast", tags: [{ no: "37 °C", en: "37 °C / 98 °F" }] },
+      { col: 2, from: 0, to: 5, kind: "main", no: "Tilsett mel, salt og honning, og elt godt", en: "Add the flours, salt and honey, and knead well", tags: [{ no: "ca. 10 min", en: "about 10 min" }] },
+      { col: 3, from: 0, to: 5, kind: "main", no: "Hev tildekket til dobbel størrelse", en: "Cover and let rise until doubled", tags: [{ no: "ca. 1 time", en: "about 1 hour" }] },
+      { col: 4, from: 0, to: 6, kind: "main", no: "Smør en dyp langpanne med olivenolje og trykk deigen ut til den dekker bunnen", en: "Oil a deep baking tray and press the dough out until it covers the base", tags: ["{pw} × {pl} cm"] },
+      { col: 5, from: 0, to: 6, kind: "main", no: "Lag groper med fingrene, hell over resten av oljen og la oljen trekke inn", en: "Dimple with your fingers, pour over the rest of the oil and let it soak in", tags: [{ no: "ca. 20 min", en: "about 20 min" }] },
+      { col: 6, from: 0, to: 6, kind: "main", no: "Stek til gyllen og sprø", en: "Bake until golden and crisp", tags: [{ no: "220 °C", en: "220 °C / 425 °F" }, { no: "ca. 18 min", en: "about 18 min" }] },
+      { col: 6, from: 7, to: 8, kind: "prep", no: "Plukk rosmarinnålene", en: "Pick the rosemary needles" },
+      { col: 7, from: 0, to: 8, kind: "main", no: "La brødet hvile, og dryss over rosmarin og flaksalt", en: "Let the bread rest, then sprinkle with rosemary and flaky salt", tags: ["10 min"] },
+      { col: 8, from: 0, to: 8, kind: "main", no: "Stek litt til", en: "Bake a little longer", tags: [{ no: "200 °C", en: "200 °C / 400 °F" }, { no: "ca. 8 min", en: "about 8 min" }] },
+      { col: 9, from: 0, to: 8, kind: "final", no: "Skjær i biter og server lun", en: "Cut into pieces and serve warm" }
+    ],
+    no: {
+      title: "Focaccia", sub: "Italiensk langpannebrød med olivenolje og rosmarin", main: "Deigen",
+      unit: "biter", count: "Antall biter", time: "Ca. 2 t",
+      facts: ["{n} {n|bit|biter}", "Ca. 2 timer", "Ovn 220 °C", "Langpanne {pw} × {pl} cm"],
+      tips: [
+        ["Durumhvete.", "Durumhvetemel gir en gylden og litt seigere smule. Du kan bytte det med vanlig hvetemel."],
+        ["Gropene.", "Trykk fingrene helt ned til bunnen, så samler oljen seg i gropene."],
+        ["Varier.", "Oliven, cherrytomater eller rødløk kan trykkes ned i deigen før steking."]
+      ]
+    },
+    en: {
+      title: "Focaccia", sub: "Italian olive-oil pan bread with rosemary", main: "Dough",
+      unit: "pieces", count: "Number of pieces", time: "About 2 h",
+      facts: ["{n} {n|piece|pieces}", "About 2 hours", "Oven 220 °C / 425 °F", "Tray {pw} × {pl} cm"],
+      tips: [
+        ["Durum wheat.", "Durum wheat flour gives a golden, slightly chewier crumb. You can replace it with all-purpose flour."],
+        ["The dimples.", "Press your fingers right down to the bottom so the oil pools in the dimples."],
+        ["Variations.", "Press olives, cherry tomatoes or red onion into the dough before baking."]
+      ]
+    }
+  },
+
+  {
+    id: "knekkebrod", cat: "bake", group: "yeast",
+    yield: { base: 24, step: 4 },
+    vars: (f) => ({ trays: String(Math.max(1, Math.round(3 * f))) }),
+    ing: [
+      { kind: "liquid", ml: 400, no: "grovt sammalt hvetemel", en: "coarse wholemeal flour" },
+      { kind: "liquid", ml: 400, no: "store havregryn", en: "rolled oats" },
+      { kind: "liquid", ml: 200, no: "solsikkekjerner", en: "sunflower seeds" },
+      { kind: "liquid", ml: 100, no: "linfrø", en: "linseed" },
+      { kind: "liquid", ml: 100, no: "sesamfrø", en: "sesame seeds" },
+      { kind: "tsp", v: 1, no: "salt", en: "salt" },
+      { kind: "liquid", ml: 700, no: "vann", en: "water" }
+    ],
+    steps: [
+      { col: 1, from: 0, to: 5, kind: "main", no: "Bland det tørre", en: "Mix the dry ingredients" },
+      { col: 2, from: 0, to: 6, kind: "main", no: "Rør inn vannet til en løs, klissete deig", en: "Stir in the water to a loose, sticky dough" },
+      { col: 3, from: 0, to: 6, kind: "main", no: "Fordel deigen tynt og jevnt på {trays} {trays|stekebrett|stekebrett} med bakepapir", en: "Spread the dough thinly and evenly over {trays} {trays|baking tray|baking trays} lined with baking paper" },
+      { col: 4, from: 0, to: 6, kind: "main", no: "Stek", en: "Bake", tags: [{ no: "160 °C varmluft", en: "160 °C / 320 °F fan" }, "25 min"] },
+      { col: 5, from: 0, to: 6, kind: "main", no: "Ta ut brettene og skjær i biter", en: "Take out the trays and cut into pieces" },
+      { col: 6, from: 0, to: 6, kind: "main", no: "Senk varmen og stek til de er gylne og sprø", en: "Lower the heat and bake until golden and crisp", tags: [{ no: "150 °C", en: "150 °C / 300 °F" }, "45–50 min"] },
+      { col: 7, from: 0, to: 6, kind: "final", no: "Avkjøl på rist", en: "Cool on a rack" }
+    ],
+    no: {
+      title: "Frøknekkebrød", sub: "Sprø knekkebrød med havregryn og frø", main: "Deigen",
+      unit: "knekkebrød", count: "Antall knekkebrød", time: "Ca. 1 t 30 min",
+      facts: ["Ca. {n} knekkebrød", "Ca. 1 t 30 min", "Varmluft 160 °C, så 150 °C"],
+      tips: [
+        ["Uten varmluft.", "Stek ett brett om gangen på 180 °C, og senk til 170 °C etter at du har skåret dem."],
+        ["Ikke sprø nok?", "La dem stå i den avslåtte ovnen med døra på gløtt til de er tørre."],
+        ["Andre frø.", "Bytt gjerne frøene, for eksempel med gresskarkjerner, så lenge totalmengden er den samme."]
+      ]
+    },
+    en: {
+      title: "Frøknekkebrød", sub: "Crisp seeded crispbread with oats", main: "Dough",
+      unit: "crispbreads", count: "Number of crispbreads", time: "About 1 h 30 min",
+      facts: ["Makes about {n}", "About 1 h 30 min", "Fan oven 160 °C, then 150 °C"],
+      tips: [
+        ["Without a fan oven.", "Bake one tray at a time at 180 °C, and lower to 170 °C after cutting."],
+        ["Not crisp enough?", "Leave them in the switched-off oven with the door ajar until dry."],
+        ["Other seeds.", "Swap the seeds, for example for pumpkin seeds, as long as the total amount stays the same."]
+      ]
+    }
+  },
+
+  {
+    id: "steinalderbrod", cat: "bake", group: "yeast",
+    yield: { base: 1, step: 1 },
+    ing: [
+      { kind: "g", g: 100, no: "mandler", en: "almonds" },
+      { kind: "g", g: 80, no: "hasselnøtter", en: "hazelnuts" },
+      { kind: "g", g: 100, no: "gresskarkjerner", en: "pumpkin seeds" },
+      { kind: "g", g: 100, no: "solsikkekjerner", en: "sunflower seeds" },
+      { kind: "g", g: 100, no: "sesamfrø", en: "sesame seeds" },
+      { kind: "g", g: 100, no: "linfrø", en: "linseed" },
+      { kind: "g", g: 100, no: "havregryn", en: "rolled oats" },
+      { kind: "g", g: 65, optional: true, no: "tørket frukt (valgfritt)", en: "dried fruit (optional)" },
+      { kind: "tsp", v: 1, no: "salt", en: "salt" },
+      { kind: "tbsp", v: 4, no: "olje", en: "oil" },
+      { kind: "count", v: 6, no: "egg", en: ["egg", "eggs"] }
+    ],
+    steps: [
+      { col: 1, from: 0, to: 1, kind: "prep", no: "Hakk grovt", en: "Chop roughly" },
+      { col: 2, from: 0, to: 8, kind: "main", no: "Bland nøtter, frø, havregryn, frukt og salt i en stor bolle", en: "Mix the nuts, seeds, oats, fruit and salt in a large bowl" },
+      { col: 3, from: 0, to: 10, kind: "main", no: "Rør inn olje og egg til en våt røre", en: "Stir in the oil and eggs to a wet mixture" },
+      { col: 4, from: 0, to: 10, kind: "main", no: "Hell røren i en brødform med bakepapir", en: "Pour into a loaf tin lined with baking paper", tags: [{ no: "ca. 28 × 13 cm", en: "about 28 × 13 cm" }] },
+      { col: 5, from: 0, to: 10, kind: "main", no: "Stek til toppen er gyllen og fast", en: "Bake until the top is golden and set", tags: [{ no: "180 °C", en: "180 °C / 350 °F" }, { no: "1 time", en: "1 hour" }] },
+      { col: 6, from: 0, to: 10, kind: "final", no: "Avkjøl helt før du skjærer tynne skiver", en: "Cool completely before slicing thinly" }
+    ],
+    no: {
+      title: "Steinalderbrød", sub: "Brød av nøtter, frø og egg, uten mel", main: "Røren",
+      unit: "brød", count: "Antall brød", time: "Ca. 1 t 15 min + avkjøling",
+      facts: ["{n} brød", "Ca. 1 t 15 min + avkjøling", "Ovn 180 °C"],
+      tips: [
+        ["Glutenfritt.", "Bruker du glutenfrie havregryn, er brødet helt glutenfritt."],
+        ["Skjær tynt.", "La brødet bli helt kaldt, ca. 1 time, så smuldrer det ikke når du skjærer."],
+        ["Oppbevaring.", "Brødet holder seg ca. en uke i kjøleskapet, og det fryser godt."]
+      ]
+    },
+    en: {
+      title: "Steinalderbrød", sub: "Stone age bread: a flourless loaf of nuts, seeds and eggs", main: "Mixture",
+      unit: "loaves", count: "Number of loaves", time: "About 1 h 15 min + cooling",
+      facts: ["{n} {n|loaf|loaves}", "About 1 h 15 min + cooling", "Oven 180 °C / 350 °F"],
+      tips: [
+        ["Gluten-free.", "With gluten-free oats, the bread is completely gluten-free."],
+        ["Slice thinly.", "Let the loaf cool completely, about 1 hour, so it doesn't crumble when sliced."],
+        ["Storage.", "It keeps for about a week in the fridge, and it freezes well."]
+      ]
+    }
+  },
+
+  {
     id: "kjottkaker", cat: "dinner", group: "stews",
     yield: { base: 4, step: 1 },
     vars: (f) => ({ cakes: String(Math.max(1, Math.round(12 * f))) }),
@@ -1206,6 +1345,58 @@ const RECIPES = [
         ["The fish.", "Cod, haddock, pollock or wolffish all work. The fish should only poach, or it falls apart."],
         ["No boiling.", "The egg yolks can curdle if the soup boils after the cream mix goes in."],
         ["Stock.", "Homemade fish stock tastes best, but stock cubes work fine."]
+      ]
+    }
+  },
+
+  {
+    id: "kyllingkarri", cat: "dinner", group: "stews",
+    yield: { base: 4, step: 1 },
+    ing: [
+      { kind: "g", g: 600, perLb: true, no: "kyllingfilet", en: "chicken breast or thigh fillets" },
+      { kind: "tbsp", v: 2, no: "olje", en: "oil" },
+      { kind: "count", v: 1, half: true, no: "løk", en: ["onion", "onions"] },
+      { kind: "count", v: 2, no: "fedd hvitløk", en: ["garlic clove", "garlic cloves"] },
+      { kind: "tbsp", v: 1, no: "fersk ingefær (revet)", en: "fresh ginger (grated)" },
+      { kind: "tbsp", v: [1, 2], no: "karripulver", en: "curry powder" },
+      { kind: "tbsp", v: 1, no: "hvetemel", en: "all-⁠purpose flour" },
+      { kind: "count", v: 1, no: ["boks hakkede tomater", "bokser hakkede tomater"], en: ["can of chopped tomatoes", "cans of chopped tomatoes"] },
+      { kind: "count", v: 0.5, half: true, no: "rød chili", en: ["red chilli", "red chillies"] },
+      { kind: "liquid", ml: 250, no: "vann", en: "water" },
+      { kind: "text", key: "taste", no: "salt og pepper", en: "salt and pepper" },
+      { kind: "tbsp", v: 3, optional: true, no: "rømme eller yoghurt (valgfritt)", en: "sour cream or yogurt (optional)" },
+      { kind: "liquid", ml: 300, no: "ris (til servering)", en: "rice (to serve)" }
+    ],
+    steps: [
+      { col: 1, from: 0, to: 0, kind: "prep", no: "Skjær i biter", en: "Cut into pieces" },
+      { col: 1, from: 2, to: 4, kind: "prep", no: "Hakk løk og hvitløk, og riv ingefæren", en: "Chop the onion and garlic, and grate the ginger" },
+      { col: 1, from: 8, to: 8, kind: "prep", no: "Hakk fint, uten frø", en: "Chop finely, without seeds" },
+      { col: 2, from: 0, to: 1, kind: "main", no: "Brun kyllingen godt i olje, og ha den over i en gryte", en: "Brown the chicken well in oil and move it to a pot" },
+      { col: 3, from: 2, to: 6, kind: "prep", no: "Fres løk, hvitløk, ingefær og karri i samme panne til løken er myk. Dryss over melet", en: "Fry the onion, garlic, ginger and curry in the same pan until the onion is soft. Sprinkle over the flour" },
+      { col: 4, from: 0, to: 9, kind: "main", no: "Ha alt i gryta med tomater, chili og vann, og la det småkoke under lokk", en: "Put everything in the pot with the tomatoes, chilli and water, and simmer with the lid on", tags: [{ no: "ca. 20 min", en: "about 20 min" }] },
+      { col: 4, from: 12, to: 12, kind: "prep", no: "Kok etter anvisningen på pakken", en: "Cook according to the packet" },
+      { col: 5, from: 0, to: 10, kind: "main", no: "Smak til med salt og pepper", en: "Season with salt and pepper" },
+      { col: 6, from: 0, to: 11, kind: "main", pre: { no: "(Valgfritt)", en: "(Optional)" }, no: "Rør inn rømme eller yoghurt like før servering", en: "Stir in sour cream or yogurt just before serving" },
+      { col: 7, from: 0, to: 12, kind: "final", no: "Server med ris", en: "Serve with rice" }
+    ],
+    no: {
+      title: "Kyllingkarri", sub: "Kylling i tomat- og karrisaus, servert med ris", main: "Kyllingen",
+      unit: "porsjoner", count: "Antall porsjoner", time: "Ca. 45 min",
+      facts: ["{n} {n|porsjon|porsjoner}", "Ca. 45 min", "Stekepanne og gryte"],
+      tips: [
+        ["Styrke.", "Karripulver varierer mye i styrke. Start med 1 ss og smak deg fram, og bruk mer chili om du vil ha det sterkere."],
+        ["Lårfilet.", "Kyllinglårfilet blir saftigere enn bryst og tåler litt lengre koking."],
+        ["Tilbehør.", "Små skåler med hakket tomat, agurk, banan, ananas, kokos og mango chutney er en klassisk måte å servere karri på."]
+      ]
+    },
+    en: {
+      title: "Chicken curry", sub: "Chicken in a tomato curry sauce, served with rice", main: "Chicken",
+      unit: "servings", count: "Servings", time: "About 45 min",
+      facts: ["{n} {n|serving|servings}", "About 45 min", "Frying pan and pot"],
+      tips: [
+        ["Heat.", "Curry powder varies a lot in strength. Start with 1 tbsp and taste as you go, and add more chilli if you like it hotter."],
+        ["Thigh fillets.", "Chicken thigh fillets stay juicier than breast and can take a little longer cooking."],
+        ["On the side.", "Small bowls of chopped tomato, cucumber, banana, pineapple, coconut and mango chutney are a classic way to serve curry."]
       ]
     }
   },
