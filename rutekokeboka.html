@@ -1,0 +1,1845 @@
+<title>Rutekokeboka</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Familjen+Grotesk:wght@500;700&display=swap">
+<style>
+/* Layout: a small recipe site. Home lists the recipes by category, each with a miniature of its grid.
+   A recipe is a table: ingredients down the left, steps flowing right as merged cells, only as wide as its text. */
+:root {
+  --bg: #F1F4F6;          /* porcelain */
+  --paper: #FFFFFF;
+  --ink: #1D2935;
+  --muted: #5A6774;
+  --rule: #C3CDD7;
+  --band: #25496D;
+  --band-ink: #F4F7FA;
+  --dough: #F4E6C8;       /* main path */
+  --prep: #E1EBF4;        /* side prep */
+  --crust: #D39A3F;       /* the finish */
+  --crust-ink: #24180A;
+  --focus: #2F6FB0;
+
+  --f-display: "Familjen Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --f-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+
+  --step-w: 5.75rem;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #11171E; --paper: #18212B; --ink: #E4EAF0; --muted: #9BA8B5; --rule: #2D3A48;
+    --band: #203C5A; --band-ink: #EAF1F8; --dough: #3A3122; --prep: #1D2F41;
+    --crust: #C98C33; --crust-ink: #1B1206; --focus: #7FB0E6;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #11171E; --paper: #18212B; --ink: #E4EAF0; --muted: #9BA8B5; --rule: #2D3A48;
+  --band: #203C5A; --band-ink: #EAF1F8; --dough: #3A3122; --prep: #1D2F41;
+  --crust: #C98C33; --crust-ink: #1B1206; --focus: #7FB0E6;
+  color-scheme: dark;
+}
+/* Palettes picked with the theme switch override the system/host theme */
+html:root[data-skin="parchment"] { --bg: #EADCBF; --paper: #F8F0DE; --ink: #3A2A1B; --muted: #6E5640; --rule: #CBB590; --band: #6A3E21; --band-ink: #FBF3E3; --dough: #EED49F; --prep: #DFE3C6; --crust: #C8893A; --crust-ink: #2A1A08; --focus: #8A4B1F; color-scheme: light; }
+html:root[data-skin="porcelain"] { --bg: #F1F4F6; --paper: #FFFFFF; --ink: #1D2935; --muted: #5A6774; --rule: #C3CDD7; --band: #25496D; --band-ink: #F4F7FA; --dough: #F4E6C8; --prep: #E1EBF4; --crust: #D39A3F; --crust-ink: #24180A; --focus: #2F6FB0; color-scheme: light; }
+html:root[data-skin="dark"] { --bg: #11171E; --paper: #18212B; --ink: #E4EAF0; --muted: #9BA8B5; --rule: #2D3A48; --band: #203C5A; --band-ink: #EAF1F8; --dough: #3A3122; --prep: #1D2F41; --crust: #C98C33; --crust-ink: #1B1206; --focus: #7FB0E6; color-scheme: dark; }
+
+html, body { height: 100%; }
+body {
+  box-sizing: border-box;
+  background: var(--bg);
+  color: var(--ink);
+  font: 400 15px/1.4 var(--f-body);
+  padding-block: 1rem 2rem;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+a { color: inherit; }
+:where(.brand, .back, .entry, .pager button) {
+  font: inherit; color: inherit; background: none; border: 0; padding: 0; margin: 0;
+  text-align: left; cursor: pointer;
+}
+a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+.page {
+  display: grid;
+  grid-template-columns: minmax(0, auto);
+  gap: 1rem;
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: auto;
+}
+.page.is-home { width: min(100%, 66rem); }
+
+/* Site bar */
+.site-top {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: .6rem 1.25rem; padding-bottom: .8rem; border-bottom: 1px solid var(--rule);
+}
+.brand {
+  display: inline-flex; align-items: center; gap: .55rem;
+  text-decoration: none; font: 700 1.3rem/1 var(--f-display); letter-spacing: -.01em;
+}
+.logo {
+  display: grid; grid-template-columns: repeat(3, .7rem); grid-template-rows: repeat(3, .7rem);
+  gap: 2px; padding: 2px; background: var(--rule); border-radius: 3px;
+}
+.logo i { background: var(--paper); }
+.logo i.m { background: var(--dough); }
+.logo i.p { background: var(--prep); }
+.logo i.f { background: var(--crust); }
+.brand-text { display: grid; gap: .2rem; }
+.slogan { font: 500 .92rem/1.2 var(--f-display); letter-spacing: 0; color: var(--muted); }
+.settings { display: flex; flex-wrap: wrap; gap: .5rem; }
+.seg {
+  display: inline-flex; border: 1px solid var(--rule); border-radius: 999px; padding: 2px; background: var(--paper);
+}
+.seg button {
+  font: 700 .85rem/1 var(--f-body); color: var(--ink);
+  background: transparent; border: 0; border-radius: 999px;
+  padding: .45rem .85rem; cursor: pointer;
+}
+.seg button[aria-pressed="true"] { background: var(--band); color: var(--band-ink); }
+
+/* Home */
+.intro { display: grid; gap: .4rem; }
+.intro h1 { margin: 0; font: 700 2.2rem/1.05 var(--f-display); letter-spacing: -.015em; text-wrap: balance; }
+.intro p { margin: 0; max-width: 62ch; color: var(--muted); font-size: 1.02rem; }
+.group { display: grid; gap: .8rem; }
+.group h2 {
+  margin: .8rem 0 0; padding-bottom: .45rem; border-bottom: 1px solid var(--rule);
+  font: 700 1.45rem/1.1 var(--f-display); letter-spacing: -.01em;
+}
+.cols { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 1.1rem 1rem; }
+.col { flex: 1 1 8rem; min-width: min(100%, 8rem); max-width: 100%; display: grid; gap: .55rem; }
+.col h3 {
+  margin: 0; font: 700 .78rem/1.2 var(--f-body);
+  letter-spacing: .09em; text-transform: uppercase; color: var(--muted);
+}
+.toc { list-style: none; margin: 0; padding: 0; display: grid; gap: .6rem; }
+.season { border: 1px dashed var(--rule); border-radius: 8px; padding: .55rem .6rem; }
+.season summary {
+  display: flex; align-items: center; gap: .45rem; cursor: pointer; list-style: none;
+  font: 700 .78rem/1.2 var(--f-body); letter-spacing: .09em; text-transform: uppercase; color: var(--muted);
+}
+.season summary::-webkit-details-marker { display: none; }
+.season summary::before { content: "▸"; font-size: .95rem; letter-spacing: 0; color: var(--ink); }
+.season[open] summary::before { content: "▾"; }
+.season[open] summary { margin-bottom: .55rem; }
+.season-list { display: flex; flex-wrap: wrap; gap: .6rem 1rem; }
+.season-list li { flex: 1 1 10rem; min-width: min(100%, 9rem); }
+.season summary:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.entry-season { font: 700 .72rem/1.2 var(--f-body); letter-spacing: .08em; text-transform: uppercase; color: var(--focus); }
+.toc li { display: grid; }
+.entry {
+  display: flex; flex-wrap: wrap; align-items: stretch; gap: .5rem .85rem;
+  width: 100%; padding: .6rem;
+  background: var(--paper); border: 1px solid var(--rule); border-radius: 8px;
+}
+.entry .mini { flex: 1 1 6.5rem; min-width: 6.5rem; max-width: 9.5rem; height: auto; min-height: 4.8rem; }
+.entry-body { flex: 3 1 9rem; min-width: min(100%, 9rem); display: flex; flex-direction: column; gap: .4rem; }
+.entry:hover { border-color: var(--band); }
+.entry-text { display: grid; align-content: start; gap: .2rem; min-width: 0; }
+.entry-title { font: 700 1.25rem/1.1 var(--f-display); letter-spacing: -.01em; text-wrap: balance; }
+.entry-sub { min-width: 0; color: var(--muted); font-size: .95rem; overflow-wrap: break-word; }
+.entry-meta {
+  margin-top: auto; display: flex; flex-wrap: wrap; gap: .2rem 1rem;
+  font: 500 .9rem/1.3 var(--f-display); font-variant-numeric: tabular-nums;
+}
+.entry-meta span + span { color: var(--muted); }
+.mini {
+  display: grid; gap: 1px; height: 6.5rem;
+  background: var(--rule); border: 1px solid var(--rule); border-radius: 4px; overflow: hidden;
+}
+.mini span { background: var(--paper); }
+.mini .mh { background: var(--band); }
+.mini .mi { background: var(--bg); }
+.mini .main { background: var(--dough); }
+.mini .prep { background: var(--prep); }
+.mini .final { background: var(--crust); }
+
+/* Recipe header */
+.crumbs { display: flex; }
+.back {
+  display: inline-flex; align-items: center; gap: .35rem;
+  font: 700 .9rem/1.2 var(--f-body); text-decoration: none; color: var(--focus);
+}
+.back:hover { text-decoration: underline; text-underline-offset: 2px; }
+.top {
+  contain: inline-size;
+  display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between;
+  gap: .35rem 1.25rem;
+}
+.title-block { flex: 1 1 16rem; min-width: min(100%, 12rem); }
+.top h1 {
+  margin: 0;
+  font: 700 2.4rem/1.05 var(--f-display);
+  letter-spacing: -.015em;
+  text-wrap: balance;
+}
+.sub { margin: .35rem 0 0; color: var(--muted); font-size: 1.05rem; }
+.facts, .howto { flex: 1 1 100%; margin: 0; }
+.facts {
+  display: flex; flex-wrap: wrap; gap: .25rem 1.5rem;
+  font: 500 .95rem/1.3 var(--f-display);
+  font-variant-numeric: tabular-nums;
+  margin-top: .4rem;
+}
+.howto {
+  display: flex; flex-wrap: wrap; align-items: center; gap: .3rem 1rem;
+  color: var(--muted); font-size: .88rem;
+}
+.key { display: inline-flex; align-items: center; gap: .4rem; }
+.sw { width: .9rem; height: .9rem; border-radius: 3px; border: 1px solid var(--rule); }
+.sw.main { background: var(--dough); }
+.sw.prep { background: var(--prep); }
+.sw.final { background: var(--crust); }
+
+/* Batch calculator */
+.controls { flex: 0 1 auto; display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1.25rem; }
+.batch { display: inline-flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
+.batch > label { font: 700 .85rem/1.2 var(--f-body); }
+.stepper, .factor {
+  display: inline-flex; align-items: center;
+  border: 1px solid var(--rule); border-radius: 999px; padding: 2px; background: var(--paper);
+}
+.stepper button {
+  width: 2rem; height: 2rem; border: 0; border-radius: 999px;
+  display: grid; place-items: center;
+  background: var(--band); color: var(--band-ink);
+  font: 700 1.15rem/1 var(--f-display); cursor: pointer;
+}
+.stepper button:disabled { opacity: .35; cursor: default; }
+.stepper input, .factor input {
+  border: 0; background: transparent; color: var(--ink);
+  font: 700 1.1rem/1 var(--f-display); text-align: center; font-variant-numeric: tabular-nums;
+}
+.stepper input { width: 3.2rem; -moz-appearance: textfield; appearance: textfield; }
+.stepper input::-webkit-outer-spin-button,
+.stepper input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.factor { padding: 2px 2px 2px .7rem; cursor: text; }
+.factor span { font: 700 1rem/1 var(--f-display); color: var(--muted); }
+.factor input { width: 3.4rem; height: 2rem; padding: 0 .3rem 0 .15rem; text-align: left; }
+.reset {
+  border: 0; background: none; padding: 0; cursor: pointer;
+  color: var(--focus); font: 700 .85rem/1.2 var(--f-body);
+  text-decoration: underline; text-underline-offset: 2px;
+}
+
+/* The sheet */
+.scroll { overflow-x: auto; min-width: 0; display: grid; }
+.sheet {
+  display: grid;
+  justify-self: start;
+  align-self: start;
+  width: max-content;
+  grid-template-columns: auto min-content repeat(var(--cols, 9), fit-content(var(--step-w)));
+  grid-template-rows: auto;
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.c {
+  background: var(--paper);
+  padding: .25em .5em;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+.h {
+  background: var(--band); color: var(--band-ink);
+  justify-content: center; text-align: center;
+  font: 700 .74rem/1.2 var(--f-body);
+  letter-spacing: .07em; text-transform: uppercase;
+}
+.h.num {
+  font: 700 .95rem/1.2 var(--f-display);
+  letter-spacing: 0; text-transform: none;
+  font-variant-numeric: tabular-nums;
+}
+.amt {
+  flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; font-weight: 700; font-variant-numeric: tabular-nums;
+  white-space: nowrap; line-height: 1.15;
+}
+.amt small { font-weight: 400; font-size: .8rem; color: var(--muted); }
+.amt .free { font-weight: 400; color: var(--muted); }
+.ing { white-space: pre-line; line-height: 1.2; justify-content: center; text-align: center; }
+.step {
+  flex-direction: column; justify-content: center; align-items: center; gap: .15rem;
+  text-align: center; line-height: 1.25; text-wrap: balance; hyphens: manual;
+}
+.step.main { background: var(--dough); }
+.step.prep { background: var(--prep); }
+.step.final { background: var(--crust); color: var(--crust-ink); font-weight: 700; font-size: 1.02rem; }
+.tag {
+  font: 700 .82rem/1.25 var(--f-display);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .01em;
+  opacity: .82;
+}
+.empty { background: var(--paper); }
+.opt { font-style: italic; color: var(--muted); }
+.pre { font-style: italic; font-size: .85rem; line-height: 1.2; color: var(--muted); margin-bottom: .15rem; }
+
+/* Tips */
+.tips { contain: inline-size; }
+.tips h2 { margin: 0 0 .4rem; font: 700 1.05rem/1.2 var(--f-display); }
+.tips ul {
+  list-style: none; margin: 0; padding: 0;
+  display: flex; flex-wrap: wrap; gap: .45rem 2rem;
+}
+.tips li { flex: 1 1 22rem; min-width: min(100%, 14rem); max-width: 62ch; font-size: .92rem; }
+.tips b { font-weight: 700; }
+
+/* Previous / next */
+.pager {
+  contain: inline-size;
+  display: flex; flex-wrap: wrap; justify-content: space-between; gap: .6rem 1rem;
+  padding-top: .8rem; border-top: 1px solid var(--rule);
+}
+.pager button { display: grid; gap: .1rem; }
+.pager button:last-child { text-align: right; margin-left: auto; }
+.pager small { font: 700 .72rem/1.2 var(--f-body); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.pager span { font: 700 1.05rem/1.2 var(--f-display); }
+.pager button:hover span { text-decoration: underline; text-underline-offset: 3px; }
+
+@media print {
+  @page { size: A4 landscape; margin: 10mm; }
+  :root:not(#x), :root[data-theme]:not(#x) {
+    --bg: #FFFFFF; --paper: #FFFFFF; --ink: #1D2935; --muted: #4E5B68; --rule: #9FAEBC;
+    --band: #25496D; --band-ink: #FFFFFF; --dough: #F4E6C8; --prep: #E1EBF4;
+    --crust: #D39A3F; --crust-ink: #24180A;
+    color-scheme: light;
+  }
+  html { font-size: 10.5pt; }
+  body { padding: 0; font-size: 10.5pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .site-top, .crumbs, .controls, .pager { display: none; }
+  .page { width: 100%; gap: 3mm; }
+  .scroll { overflow: visible; }
+  .sheet { width: 100%; grid-template-columns: auto min-content repeat(var(--cols, 9), 1fr) !important; break-inside: avoid; }
+  .top h1 { font-size: 22pt; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .seg button, .entry { transition: background-color .15s ease, color .15s ease, border-color .15s ease; }
+}
+</style>
+
+<div class="page" id="page">
+  <header class="site-top">
+    <button type="button" class="brand" id="brand" data-route="home">
+      <span class="logo" aria-hidden="true"><i class="m"></i><i class="m"></i><i class="f"></i><i class="p"></i><i class="m"></i><i class="f"></i><i></i><i class="p"></i><i class="f"></i></span>
+      <span class="brand-text"><span class="brand-name">Rutekokeboka</span> <span class="slogan" id="slogan">for de som ønsker å være rutta</span></span>
+    </button>
+    <div class="settings">
+      <div class="seg" role="group" id="theme-group" aria-label="Tema">
+        <button type="button" id="btn-parchment" data-skin="parchment" aria-pressed="false">Pergament</button>
+        <button type="button" id="btn-porcelain" data-skin="porcelain" aria-pressed="false">Porselen</button>
+        <button type="button" id="btn-dark" data-skin="dark" aria-pressed="false">Mørk</button>
+      </div>
+      <div class="seg" role="group" aria-label="Språk / Language">
+        <button type="button" id="btn-no" data-lang="no" aria-pressed="true">Norsk</button>
+        <button type="button" id="btn-en" data-lang="en" aria-pressed="false">English</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="home">
+    <div class="intro">
+      <h1 id="intro-title">Oppskrifter i ruter</h1>
+      <p id="intro-text"></p>
+    </div>
+    <div id="groups"></div>
+  </main>
+
+  <main id="recipe" hidden>
+    <nav class="crumbs"><button type="button" class="back" id="back" data-route="home">← <span id="back-text">Alle oppskrifter</span></button></nav>
+    <header class="top">
+      <div class="title-block">
+        <h1 id="title"></h1>
+        <p class="sub" id="sub"></p>
+      </div>
+      <div class="controls">
+        <div class="batch">
+          <label id="batch-label" for="batch-n">Antall</label>
+          <div class="stepper">
+            <button type="button" id="batch-minus" aria-label="Færre">−</button>
+            <input id="batch-n" type="number" inputmode="numeric" min="1" step="1" value="20">
+            <button type="button" id="batch-plus" aria-label="Flere">+</button>
+          </div>
+          <label class="factor" for="batch-f">
+            <span aria-hidden="true">×</span>
+            <input id="batch-f" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="1" aria-label="Gange oppskriften med">
+          </label>
+          <button type="button" class="reset" id="batch-reset" hidden>Tilbake</button>
+        </div>
+      </div>
+      <p class="facts" id="facts"></p>
+      <p class="howto" id="howto"></p>
+    </header>
+
+    <div class="scroll">
+      <div class="sheet" id="sheet" role="group"></div>
+    </div>
+
+    <section class="tips">
+      <h2 id="tips-title">Tips</h2>
+      <ul id="tips"></ul>
+    </section>
+
+    <nav class="pager" id="pager"></nav>
+  </main>
+</div>
+
+<script>
+const NB = " ";
+
+/* ---------- interface text ---------- */
+const UI = {
+  no: {
+    lang: "nb", decimal: ",", u: { tsp: "ts", tbsp: "ss" }, taste: "etter smak",
+    slogan: "for de som ønsker å være rutta",
+    introTitle: "Oppskrifter i ruter",
+    intro: "Hver oppskrift er en tabell. Ingrediensene står nedover, trinnene går bortover, og hvert trinn dekker ingrediensene det bruker. Da ser du med en gang hva som skal blandes når.",
+    cats: { bake: "Bakst", dinner: "Middag" },
+    groups: { cakes: "Kaker og desserter", yeast: "Gjærbakst", stews: "Supper og gryter", pan: "Panneretter" },
+    seasonTitle: "Sesongbakst",
+    back: "Alle oppskrifter", prev: "Forrige", next: "Neste",
+    howto: "Les fra venstre mot høyre. Hvert trinn dekker ingrediensene det bruker.",
+    legend: ["Forberedes ved siden av", "Ferdig"],
+    head: ["Mengde", "Ingrediens"], stepLabel: "Trinn",
+    fewer: "Færre", more: "Flere", factor: "Gange oppskriften med", reset: "Tilbake til {base}",
+    themeLabel: "Tema", themes: { parchment: "Pergament", porcelain: "Porselen", dark: "Mørk" },
+    tipsTitle: "Tips"
+  },
+  en: {
+    lang: "en", decimal: ".", u: { tsp: "tsp", tbsp: "tbsp" }, taste: "to taste",
+    slogan: "for those who want to be seasoned",
+    introTitle: "Recipes on a grid",
+    intro: "Rutekokeboka is Norwegian for “the grid cookbook”. Every recipe is a table: ingredients run down the side, steps run across, and each step spans the ingredients it uses. You can see at a glance what goes together when.",
+    cats: { bake: "Baking", dinner: "Dinner" },
+    groups: { cakes: "Cakes and desserts", yeast: "Breads and buns", stews: "Soups and stews", pan: "From the pan" },
+    seasonTitle: "Seasonal baking",
+    back: "All recipes", prev: "Previous", next: "Next",
+    howto: "Read left to right. Each step spans the ingredients it uses.",
+    legend: ["Side prep", "Done"],
+    head: ["Amount", "Ingredient"], stepLabel: "Step",
+    fewer: "Fewer", more: "More", factor: "Multiply the recipe by", reset: "Back to {base}",
+    themeLabel: "Theme", themes: { parchment: "Parchment", porcelain: "Porcelain", dark: "Dark" },
+    tipsTitle: "Tips"
+  }
+};
+
+/* ---------- recipes ----------
+   ing:   one row per ingredient. Amounts are for the base yield; perCup = grams per US cup, perLb = show pounds (English only).
+   steps: col = step number, from/to = first and last ingredient row the step covers. */
+const RECIPES = [
+  {
+    id: "hveteboller", cat: "bake", group: "yeast",
+    yield: { base: 20, step: 5 },
+    vars: (f, L) => {
+      const q = spoon(f);
+      return {
+        yeast: grams(50 * f),
+        dry: grams(12 * f),
+        dryTsp: spoon(4 * f).text + NB + L.u.tsp,
+        packets: q.text + NB + (L.lang === "nb" ? (q.value >= 2 ? "poser" : "pose") : (q.value > 1 ? "packets" : "packet")),
+        flour: grams(750 * f)
+      };
+    },
+    ing: [
+      { kind: "liquid", ml: 500, no: "melk", en: "milk" },
+      { kind: "g", g: 150, perCup: 227, no: "smør", en: "butter" },
+      { kind: "g", g: 125, perCup: 200, no: "sukker", en: "sugar" },
+      { kind: "g", g: 50, no: "fersk gjær", en: "fresh yeast" },
+      { kind: "g", g: [750, 850], perCup: 125, no: "hvetemel", en: "all-⁠purpose flour" },
+      { kind: "tsp", v: 1, no: "malt kardemomme", en: "ground cardamom" },
+      { kind: "tsp", v: 0.5, no: "salt", en: "salt" },
+      { kind: "g", g: 150, perCup: 150, optional: true, no: "rosiner eller sjokolade (valgfritt)", en: "raisins or chocolate (optional)" },
+      { kind: "count", v: 1, no: "egg (til pensling)", en: "egg (for brushing)" },
+      { kind: "tbsp", v: 1, no: "melk (til pensling)", en: "milk (for brushing)" }
+    ],
+    steps: [
+      { col: 1, from: 0, to: 2, kind: "prep", no: "Varm opp til smøret er smeltet, avkjøl til fingervarm", en: "Heat until the butter melts, then cool to finger-warm", tags: [{ no: "ca. 37 °C", en: "37 °C / 98 °F" }] },
+      { col: 2, from: 0, to: 3, kind: "main", no: "Rør ut gjæren i væsken", en: "Stir the yeast into the liquid" },
+      { col: 2, from: 4, to: 6, kind: "prep", no: "Bland det tørre", en: "Mix the dry ingredients" },
+      { col: 3, from: 0, to: 6, kind: "main", no: "Elt til en smidig deig", en: "Knead to a smooth, elastic dough", tags: [{ no: "ca. 10 min", en: "about 10 min" }] },
+      { col: 4, from: 0, to: 6, kind: "main", no: "Hev tildekket", en: "Cover and let rise", tags: ["30–45 min"] },
+      { col: 5, from: 0, to: 7, kind: "main", pre: { no: "(Valgfritt: elt inn rosiner eller sjokolade)", en: "(Optional: knead in raisins or chocolate)" }, no: "Del i ca. {n} {n|emne|emner}, trill runde boller og legg på stekeplate med bakepapir", en: "Divide into about {n} {n|piece|pieces}, roll into balls, place on lined baking sheets", tags: [{ no: "ca. 80 g per bolle", en: "≈ 80 g each" }] },
+      { col: 6, from: 0, to: 7, kind: "main", no: "Etterhev", en: "Let rise again", tags: ["40–60 min"] },
+      { col: 6, from: 8, to: 9, kind: "prep", no: "Visp sammen", en: "Whisk together" },
+      { col: 7, from: 0, to: 9, kind: "main", no: "Pensle bollene", en: "Brush the buns" },
+      { col: 8, from: 0, to: 9, kind: "main", no: "Stek midt i ovnen til de er gylne", en: "Bake in the middle of the oven until golden", tags: [{ no: "220 °C", en: "220 °C / 425 °F" }, { no: "ca. 10 min", en: "about 10 min" }] },
+      { col: 9, from: 0, to: 9, kind: "final", no: "Avkjøl på rist", en: "Cool on a rack" }
+    ],
+    no: {
+      title: "Hveteboller", sub: "Myke norske boller med kardemomme", main: "Deigen",
+      unit: "boller", count: "Antall boller", time: "Ca. 2 t",
+      facts: ["Ca. {n} {n|bolle|boller}", "Ca. 2 timer inkl. heving", "Ovn 220 °C"],
+      tips: [
+        ["Tørrgjær.", "Bytt ut {yeast} fersk gjær med {packets} ({dry}) tørrgjær. Bland den med melet i stedet for i væsken."],
+        ["Mel.", "Start med {flour} og tilsett mer ved behov. Deigen skal slippe bollen og være myk, men ikke klissete."],
+        ["Temperatur.", "For varm væske dreper gjæren, så fingervarm er nok. Med varmluft senker du ovnen til ca. 200 °C."],
+        ["Varianter.", "Rosiner eller sjokolade eltes inn når du former bollene (trinn 5). Du kan også drysse perlesukker over etter pensling. Bollene fryser godt."]
+      ]
+    },
+    en: {
+      title: "Hveteboller", sub: "Norwegian cardamom buns", main: "Dough",
+      unit: "buns", count: "Number of buns", time: "About 2 h",
+      facts: ["Makes about {n}", "About 2 hours incl. rising", "Oven 220 °C / 425 °F"],
+      tips: [
+        ["Dry yeast.", "Replace the {yeast} fresh yeast with {dry} (about {dryTsp}) instant yeast. Mix it into the flour instead of the liquid."],
+        ["Flour.", "Start with {flour} and add more as needed. The dough should pull away from the bowl and feel soft but not sticky."],
+        ["Temperature.", "Liquid that is too hot kills the yeast, so finger-warm is enough. In a fan oven, lower the heat to about 200 °C (400 °F)."],
+        ["Variations.", "Raisins or chocolate are kneaded in when you shape the buns (step 5). You can also sprinkle pearl sugar on top after brushing. The buns freeze well."]
+      ]
+    }
+  },
+
+  {
+    id: "vafler", cat: "bake", group: "cakes",
+    yield: { base: 10, step: 2 },
+    ing: [
+      { kind: "count", v: 4, no: "egg", en: ["egg", "eggs"] },
+      { kind: "tbsp", v: 5, no: "sukker", en: "sugar" },
+      { kind: "liquid", ml: 500, no: "hvetemel", en: "all-⁠purpose flour" },
+      { kind: "tsp", v: 1, no: "bakepulver", en: "baking powder" },
+      { kind: "tsp", v: 0.5, no: "malt kardemomme", en: "ground cardamom" },
+      { kind: "liquid", ml: 500, no: "melk", en: "milk" },
+      { kind: "g", g: 100, perCup: 227, no: "smør", en: "butter" },
+      { kind: "text", key: "taste", optional: true, no: "rømme og syltetøy (til servering)", en: "jam and sour cream (to serve)" }
+    ],
+    steps: [
+      { col: 1, from: 0, to: 1, kind: "main", no: "Visp egg og sukker lett sammen", en: "Whisk the eggs and sugar lightly" },
+      { col: 1, from: 2, to: 4, kind: "prep", no: "Bland det tørre", en: "Mix the dry ingredients" },
+      { col: 1, from: 6, to: 6, kind: "prep", no: "Smelt, og avkjøl litt", en: "Melt, then cool slightly" },
+      { col: 2, from: 0, to: 5, kind: "main", no: "Visp inn det tørre og melken vekselvis til en klumpfri røre", en: "Whisk in the dry mix and the milk in turns until smooth" },
+      { col: 3, from: 0, to: 6, kind: "main", no: "Rør inn smøret", en: "Stir in the butter" },
+      { col: 4, from: 0, to: 6, kind: "main", no: "La røren svelle", en: "Let the batter rest", tags: ["15–30 min"] },
+      { col: 5, from: 0, to: 6, kind: "main", no: "Stek i godt varmt vaffeljern til platene er gylne", en: "Bake in a hot waffle iron until golden" },
+      { col: 6, from: 0, to: 7, kind: "final", no: "Server lune med rømme og syltetøy", en: "Serve warm with jam and sour cream" }
+    ],
+    no: {
+      title: "Vafler", sub: "Norske vafler med kardemomme", main: "Røren",
+      unit: "plater", count: "Antall plater", time: "Ca. 45 min",
+      facts: ["Ca. {n} {n|plate|plater}", "Ca. 45 min inkl. svelling", "Vaffeljern"],
+      tips: [
+        ["Konsistens.", "Røren skal være tykk som en saus. Er den for tykk etter svellingen, rører du inn litt kaldt vann."],
+        ["Vaffeljernet.", "Smør jernet med litt smør før den første plata, og la det bli godt varmt."],
+        ["Servering.", "Brunost passer like godt som rømme og syltetøy. Vafler kan fryses og varmes i brødristeren."]
+      ]
+    },
+    en: {
+      title: "Vafler", sub: "Norwegian waffles", main: "Batter",
+      unit: "waffles", count: "Number of waffles", time: "About 45 min",
+      facts: ["Makes about {n}", "About 45 min incl. resting", "Waffle iron"],
+      tips: [
+        ["Consistency.", "The batter should be as thick as a sauce. If it is too thick after resting, stir in a little cold water."],
+        ["The iron.", "Grease the iron with a little butter before the first waffle, and let it get properly hot."],
+        ["Serving.", "Brown cheese (brunost) works as well as jam and sour cream. Waffles freeze well and reheat in a toaster."]
+      ]
+    }
+  },
+
+  {
+    id: "eplekake", cat: "bake", group: "cakes",
+    yield: { base: 12, step: 4 },
+    vars: (f) => ({ pan: String(Math.round(24 * Math.sqrt(f))) }),
+    ing: [
+      { kind: "g", g: 200, perCup: 227, no: "mykt smør", en: "soft butter" },
+      { kind: "g", g: 200, perCup: 200, no: "sukker", en: "sugar" },
+      { kind: "count", v: 4, no: "egg", en: ["egg", "eggs"] },
+      { kind: "g", g: 170, perCup: 125, no: "hvetemel", en: "all-⁠purpose flour" },
+      { kind: "tsp", v: 1, no: "bakepulver", en: "baking powder" },
+      { kind: "count", v: 4, no: ["eple", "epler"], en: ["apple", "apples"] },
+      { kind: "tbsp", v: 4, no: "sukker (til eplene)", en: "sugar (for the apples)" },
+      { kind: "tsp", v: 2, no: "kanel", en: "ground cinnamon" },
+      { kind: "tbsp", v: 2, optional: true, no: "perlesukker (valgfritt)", en: "pearl sugar (optional)" }
+    ],
+    steps: [
+      { col: 1, from: 0, to: 1, kind: "main", no: "Rør smør og sukker hvitt og luftig", en: "Beat the butter and sugar until pale and fluffy", tags: ["3–4 min"] },
+      { col: 1, from: 3, to: 4, kind: "prep", no: "Bland", en: "Mix" },
+      { col: 1, from: 5, to: 5, kind: "prep", no: "Skrell, fjern kjernehuset og del i båter", en: "Peel, core and cut into wedges" },
+      { col: 2, from: 0, to: 2, kind: "main", no: "Rør inn eggene ett om gangen", en: "Beat in the eggs one at a time" },
+      { col: 2, from: 5, to: 7, kind: "prep", no: "Vend båtene i sukker og kanel", en: "Toss the wedges in sugar and cinnamon" },
+      { col: 3, from: 0, to: 4, kind: "main", no: "Vend inn melblandingen til en jevn røre", en: "Fold in the flour mix until smooth" },
+      { col: 4, from: 0, to: 7, kind: "main", no: "Legg halve røren og halve eplene i en form med bakepapir, og gjenta", en: "Layer half the batter and half the apples in a lined pan, then repeat", tags: ["Ø{pan} cm"] },
+      { col: 5, from: 0, to: 8, kind: "main", pre: { no: "(Valgfritt: dryss over perlesukker)", en: "(Optional: sprinkle with pearl sugar)" }, no: "Stek midt i ovnen til en pinne kommer ut tørr", en: "Bake in the middle of the oven until a skewer comes out clean", tags: [{ no: "180 °C", en: "180 °C / 350 °F" }, "40–50 min"] },
+      { col: 6, from: 0, to: 8, kind: "final", no: "Avkjøl litt før kaken tas ut av formen", en: "Cool a little before taking it out of the pan" }
+    ],
+    no: {
+      title: "Eplekake", sub: "Saftig eplekake med kanel", main: "Røren",
+      unit: "stykker", count: "Antall stykker", time: "Ca. 1 t 15 min",
+      facts: ["{n} {n|stykke|stykker}", "Ca. 1 t 15 min", "Ovn 180 °C", "Form Ø{pan} cm"],
+      tips: [
+        ["Formen.", "Formen regnes om når du endrer antall stykker, så kaken blir like høy og steketiden omtrent den samme. Dobbel porsjon passer i en langpanne på ca. 25 × 35 cm."],
+        ["Steketid.", "Kjenn etter med en pinne etter 35–40 minutter. Kaken blir tørr hvis den stekes for lenge."],
+        ["Romtemperatur.", "Mykt smør og egg i romtemperatur gir en luftigere røre."],
+        ["Servering.", "Server kaken lun med vaniljesaus, krem eller is."]
+      ]
+    },
+    en: {
+      title: "Eplekake", sub: "Norwegian apple cake", main: "Batter",
+      unit: "slices", count: "Number of slices", time: "About 1 h 15 min",
+      facts: ["{n} {n|slice|slices}", "About 1 h 15 min", "Oven 180 °C / 350 °F", "Pan Ø{pan} cm"],
+      tips: [
+        ["The pan.", "The pan size is recalculated when you change the number of slices, so the cake keeps its height and the baking time stays about the same. A double batch fits a sheet pan of about 25 × 35 cm (10 × 14 in)."],
+        ["Baking time.", "Test with a skewer after 35–40 minutes. The cake dries out if it bakes too long."],
+        ["Room temperature.", "Soft butter and room-temperature eggs give a lighter batter."],
+        ["Serving.", "Serve warm with custard, whipped cream or ice cream."]
+      ]
+    }
+  },
+
+  {
+    id: "gulrotkake", cat: "bake", group: "cakes",
+    yield: { base: 20, step: 5 },
+    vars: (f) => ({ pw: String(Math.round(25 * Math.sqrt(f))), pl: String(Math.round(40 * Math.sqrt(f))) }),
+    ing: [
+      { kind: "count", v: 6, no: "egg", en: ["egg", "eggs"] },
+      { kind: "liquid", ml: 600, no: "sukker", en: "sugar" },
+      { kind: "liquid", ml: 350, no: "nøytral olje", en: "neutral oil" },
+      { kind: "g", g: 500, perLb: true, no: "gulrot", en: "carrots" },
+      { kind: "liquid", ml: 600, no: "hvetemel", en: "all-⁠purpose flour" },
+      { kind: "tbsp", v: 1, no: "bakepulver", en: "baking powder" },
+      { kind: "tsp", v: 1, no: "kanel", en: "ground cinnamon" },
+      { kind: "g", g: 200, perLb: true, no: "kremost (naturell)", en: "cream cheese" },
+      { kind: "g", g: 200, perCup: 227, no: "mykt smør", en: "soft butter" },
+      { kind: "g", g: 200, perCup: 120, no: "melis", en: "icing sugar" }
+    ],
+    steps: [
+      { col: 1, from: 0, to: 2, kind: "main", no: "Rør sammen egg, sukker og olje", en: "Mix the eggs, sugar and oil" },
+      { col: 1, from: 3, to: 3, kind: "prep", no: "Skrell og riv fint", en: "Peel and grate finely" },
+      { col: 1, from: 4, to: 6, kind: "prep", no: "Sikt sammen", en: "Sift together" },
+      { col: 2, from: 0, to: 3, kind: "main", no: "Rør inn gulroten", en: "Stir in the carrots" },
+      { col: 3, from: 0, to: 6, kind: "main", no: "Rør inn melblandingen til en jevn røre", en: "Stir in the flour mix until smooth" },
+      { col: 4, from: 0, to: 6, kind: "main", no: "Hell røren i en langpanne med bakepapir", en: "Pour into a sheet pan lined with baking paper", tags: ["{pw} × {pl} cm"] },
+      { col: 5, from: 0, to: 6, kind: "main", no: "Stek nederst i ovnen til en pinne kommer ut tørr", en: "Bake on the lowest rack until a skewer comes out clean", tags: [{ no: "180 °C", en: "180 °C / 350 °F" }, { no: "ca. 30 min", en: "about 30 min" }] },
+      { col: 6, from: 0, to: 6, kind: "main", no: "Avkjøl helt", en: "Cool completely" },
+      { col: 6, from: 7, to: 9, kind: "prep", no: "Pisk til en jevn, smørbar krem", en: "Beat into a smooth, spreadable frosting" },
+      { col: 7, from: 0, to: 9, kind: "final", no: "Smør kremen over den kalde kaken", en: "Spread the frosting over the cold cake" }
+    ],
+    no: {
+      title: "Gulrotkake", sub: "Saftig langpannekake med kremostglasur", main: "Røren",
+      unit: "stykker", count: "Antall stykker", time: "Ca. 1 t + avkjøling",
+      facts: ["{n} {n|stykke|stykker}", "Ca. 1 t + avkjøling", "Ovn 180 °C", "Langpanne {pw} × {pl} cm"],
+      tips: [
+        ["Glasuren.", "Kremost og smør i romtemperatur gir en glatt krem uten klumper."],
+        ["Formen.", "Langpanna regnes om når du endrer antall stykker, så kaken blir like høy og steketiden omtrent den samme."],
+        ["Pynt.", "Skjær tynne gulrotstrimler med en potetskreller og legg dem på glasuren."]
+      ]
+    },
+    en: {
+      title: "Gulrotkake", sub: "Moist carrot sheet cake with cream cheese frosting", main: "Batter",
+      unit: "slices", count: "Number of slices", time: "About 1 h + cooling",
+      facts: ["{n} {n|slice|slices}", "About 1 h + cooling", "Oven 180 °C / 350 °F", "Sheet pan {pw} × {pl} cm"],
+      tips: [
+        ["Frosting.", "Room-temperature cream cheese and butter give a smooth frosting without lumps."],
+        ["The pan.", "The pan size is recalculated when you change the number of slices, so the cake keeps its height and the baking time stays about the same."],
+        ["Decoration.", "Cut thin carrot ribbons with a vegetable peeler and lay them on the frosting."]
+      ]
+    }
+  },
+
+  {
+    id: "havrekjeks", cat: "bake", group: "cakes",
+    yield: { base: 50, step: 10 },
+    ing: [
+      { kind: "g", g: 250, perCup: 227, no: "smør", en: "butter" },
+      { kind: "liquid", ml: 150, no: "melk", en: "milk" },
+      { kind: "g", g: 250, perCup: 90, no: "havregryn", en: "rolled oats" },
+      { kind: "g", g: 250, perCup: 125, no: "hvetemel", en: "all-⁠purpose flour" },
+      { kind: "g", g: 150, perCup: 200, no: "sukker", en: "sugar" },
+      { kind: "tsp", v: 2, no: "hornsalt", en: "baker's ammonia" },
+      { kind: "g", g: 200, no: "sjokolade", en: "chocolate" }
+    ],
+    steps: [
+      { col: 1, from: 0, to: 1, kind: "main", no: "Smelt smøret og rør inn melken", en: "Melt the butter and stir in the milk" },
+      { col: 1, from: 2, to: 5, kind: "prep", no: "Bland det tørre", en: "Mix the dry ingredients" },
+      { col: 2, from: 0, to: 5, kind: "main", no: "Rør det smeltede inn i det tørre til en deig", en: "Stir the melted mix into the dry ingredients to make a dough" },
+      { col: 3, from: 0, to: 5, kind: "main", no: "Avkjøl deigen til den er kald og lett å kjevle", en: "Chill the dough until cold and easy to roll", tags: [{ no: "gjerne over natten", en: "ideally overnight" }] },
+      { col: 4, from: 0, to: 5, kind: "main", no: "Kjevle ut tynt, stikk ut runde kjeks og prikk dem med en gaffel", en: "Roll out thinly, cut out rounds and prick them with a fork", tags: ["Ø8 cm"] },
+      { col: 5, from: 0, to: 5, kind: "main", no: "Stek midt i ovnen til de er gylne", en: "Bake in the middle of the oven until golden", tags: [{ no: "190 °C", en: "190 °C / 375 °F" }, "10–12 min"] },
+      { col: 6, from: 0, to: 5, kind: "main", no: "Avkjøl på rist", en: "Cool on a rack" },
+      { col: 6, from: 6, to: 6, kind: "prep", no: "Smelt forsiktig", en: "Melt gently" },
+      { col: 7, from: 0, to: 6, kind: "main", no: "Dypp undersiden av kjeksene i sjokoladen", en: "Dip the underside of each biscuit in the chocolate" },
+      { col: 8, from: 0, to: 6, kind: "final", no: "La sjokoladen stivne", en: "Leave until the chocolate sets" }
+    ],
+    no: {
+      title: "Havrekjeks med sjokolade", sub: "Sprø havrekjeks dyppet i sjokolade", main: "Deigen",
+      unit: "kjeks", count: "Antall kjeks", time: "Ca. 1 t + kjøling",
+      facts: ["Ca. {n} kjeks", "Ca. 1 t + kjøling", "Ovn 190 °C"],
+      tips: [
+        ["Hornsalt.", "Hornsalt gir ekstra sprø kjeks. Har du det ikke, kan du bruke like mye natron."],
+        ["Sjokoladen.", "Melkesjokolade og mørk sjokolade går like fint. Smelt den over vannbad eller i mikroen på lav effekt, og rør ofte."],
+        ["Oppbevaring.", "Kjeksene holder seg sprø i en lufttett boks."]
+      ]
+    },
+    en: {
+      title: "Havrekjeks med sjokolade", sub: "Crisp oat biscuits dipped in chocolate", main: "Dough",
+      unit: "biscuits", count: "Number of biscuits", time: "About 1 h + chilling",
+      facts: ["Makes about {n}", "About 1 h + chilling", "Oven 190 °C / 375 °F"],
+      tips: [
+        ["Baker's ammonia.", "Baker's ammonia (hornsalt) makes the biscuits extra crisp. If you don't have it, use the same amount of baking soda."],
+        ["Chocolate.", "Milk or dark chocolate both work. Melt it over a water bath or in the microwave on low power, stirring often."],
+        ["Storage.", "The biscuits stay crisp in an airtight tin."]
+      ]
+    }
+  },
+
+  {
+    id: "kanelsnurrer", cat: "bake", group: "cakes",
+    yield: { base: 24, step: 4 },
+    vars: (f) => ({ sheets: String(Math.max(1, Math.round(2 * f))) }),
+    ing: [
+      { kind: "g", g: 150, perCup: 227, no: "smør", en: "butter" },
+      { kind: "liquid", ml: 500, no: "melk", en: "milk" },
+      { kind: "g", g: 50, no: "fersk gjær", en: "fresh yeast" },
+      { kind: "tsp", v: 0.5, no: "salt", en: "salt" },
+      { kind: "liquid", ml: 125, no: "sukker", en: "sugar" },
+      { kind: "count", v: 1, no: "egg", en: ["egg", "eggs"] },
+      { kind: "tsp", v: 2, optional: true, no: "malt kardemomme (valgfritt)", en: "ground cardamom (optional)" },
+      { kind: "g", g: 900, perCup: 125, no: "hvetemel", en: "all-⁠purpose flour" },
+      { kind: "g", g: 200, perCup: 227, no: "mykt smør (til fyllet)", en: "soft butter (filling)" },
+      { kind: "liquid", ml: 200, no: "sukker (til fyllet)", en: "sugar (filling)" },
+      { kind: "tbsp", v: 3, no: "kanel", en: "ground cinnamon" },
+      { kind: "tbsp", v: 1, no: "melk (til pensling)", en: "milk (for brushing)" },
+      { kind: "tbsp", v: 4, optional: true, no: "perlesukker (valgfritt)", en: "pearl sugar (optional)" }
+    ],
+    steps: [
+      { col: 1, from: 0, to: 1, kind: "prep", no: "Smelt smøret, tilsett melken og varm til fingervarm", en: "Melt the butter, add the milk and warm to finger-warm", tags: [{ no: "ca. 37 °C", en: "37 °C / 98 °F" }] },
+      { col: 2, from: 0, to: 2, kind: "main", no: "Rør ut gjæren i væsken", en: "Dissolve the yeast in the liquid" },
+      { col: 3, from: 0, to: 7, kind: "main", no: "Tilsett salt, sukker, egg og kardemomme. Elt inn nesten alt melet til en smidig, litt løs deig", en: "Add the salt, sugar, egg and cardamom. Knead in most of the flour to a smooth, slightly loose dough" },
+      { col: 4, from: 0, to: 7, kind: "main", no: "Hev tildekket", en: "Cover and let rise", tags: [{ no: "ca. 30 min", en: "about 30 min" }] },
+      { col: 4, from: 8, to: 10, kind: "prep", no: "Rør sammen fyllet", en: "Mix the filling" },
+      { col: 5, from: 0, to: 10, kind: "main", no: "Del deigen i {sheets} {sheets|del|deler}. Kjevle ut, smør på fyllet, rull sammen og skjær i skiver", en: "Divide the dough into {sheets} {sheets|piece|pieces}. Roll out, spread with the filling, roll up and slice", tags: [{ no: "ca. 20 × 45 cm per leiv", en: "about 20 × 45 cm each" }, { no: "2 cm brede skiver", en: "2 cm slices" }] },
+      { col: 6, from: 0, to: 10, kind: "main", no: "Legg snurrene med snittflaten ned på stekeplate med bakepapir, og etterhev", en: "Place the swirls cut side down on lined baking sheets and let rise again", tags: [{ no: "ca. 30 min", en: "about 30 min" }] },
+      { col: 7, from: 0, to: 12, kind: "main", pre: { no: "(Valgfritt: dryss over perlesukker)", en: "(Optional: sprinkle with pearl sugar)" }, no: "Pensle med melk og stek midt i ovnen", en: "Brush with milk and bake in the middle of the oven", tags: [{ no: "250 °C", en: "250 °C / 480 °F" }, "7–8 min"] },
+      { col: 8, from: 0, to: 12, kind: "final", no: "Avkjøl på rist", en: "Cool on a rack" }
+    ],
+    no: {
+      title: "Kanelsnurrer", sub: "Saftige snurrer med smør, sukker og kanel", main: "Deigen",
+      unit: "snurrer", count: "Antall snurrer", time: "Ca. 1 t 30 min",
+      facts: ["Ca. {n} {n|kanelsnurr|kanelsnurrer}", "Ca. 1 t 30 min", "Ovn 250 °C"],
+      tips: [
+        ["Lite mel.", "Bruk så lite mel som mulig, så blir snurrene saftige. Er deigen for løs, tilsetter du litt og litt."],
+        ["Følg med.", "På 250 °C går det fort fra gyllent til brent, så hold øye med ovnen."],
+        ["Kardemomme.", "Kardemomme i deigen er valgfritt, men gir den klassiske smaken."]
+      ]
+    },
+    en: {
+      title: "Kanelsnurrer", sub: "Soft cinnamon swirls with butter and sugar", main: "Dough",
+      unit: "swirls", count: "Number of swirls", time: "About 1 h 30 min",
+      facts: ["Makes about {n}", "About 1 h 30 min", "Oven 250 °C / 480 °F"],
+      tips: [
+        ["Go easy on flour.", "Use as little flour as you can for juicy swirls. If the dough is too loose, add a little at a time."],
+        ["Watch the oven.", "At 250 °C they go from golden to burnt quickly, so keep an eye on them."],
+        ["Cardamom.", "Cardamom in the dough is optional, but it gives the classic flavour."]
+      ]
+    }
+  },
+
+  {
+    id: "skolebrod", cat: "bake", group: "cakes",
+    yield: { base: 20, step: 5 },
+    ing: [
+      { kind: "liquid", ml: 500, no: "melk", en: "milk" },
+      { kind: "g", g: 150, perCup: 227, no: "smør", en: "butter" },
+      { kind: "g", g: 125, perCup: 200, no: "sukker", en: "sugar" },
+      { kind: "g", g: 50, no: "fersk gjær", en: "fresh yeast" },
+      { kind: "g", g: [750, 850], perCup: 125, no: "hvetemel", en: "all-⁠purpose flour" },
+      { kind: "tsp", v: 1, no: "malt kardemomme", en: "ground cardamom" },
+      { kind: "tsp", v: 0.5, no: "salt", en: "salt" },
+      { kind: "g", g: 500, perLb: true, no: "vaniljekrem", en: "vanilla custard" },
+      { kind: "g", g: 200, perCup: 120, no: "melis", en: "icing sugar" },
+      { kind: "tbsp", v: [2, 3], no: "vann", en: "water" },
+      { kind: "liquid", ml: 100, no: "kokos", en: "desiccated coconut" }
+    ],
+    steps: [
+      { col: 1, from: 0, to: 2, kind: "prep", no: "Varm opp til smøret er smeltet, avkjøl til fingervarm", en: "Heat until the butter melts, then cool to finger-warm", tags: [{ no: "ca. 37 °C", en: "37 °C / 98 °F" }] },
+      { col: 2, from: 0, to: 3, kind: "main", no: "Rør ut gjæren i væsken", en: "Stir the yeast into the liquid" },
+      { col: 2, from: 4, to: 6, kind: "prep", no: "Bland det tørre", en: "Mix the dry ingredients" },
+      { col: 3, from: 0, to: 6, kind: "main", no: "Elt til en smidig deig", en: "Knead to a smooth dough", tags: [{ no: "ca. 10 min", en: "about 10 min" }] },
+      { col: 4, from: 0, to: 6, kind: "main", no: "Hev tildekket", en: "Cover and let rise", tags: ["30–45 min"] },
+      { col: 5, from: 0, to: 6, kind: "main", no: "Del i ca. {n} {n|emne|emner}, trill boller og trykk dem litt flate", en: "Divide into about {n} {n|piece|pieces}, roll into balls and flatten slightly" },
+      { col: 6, from: 0, to: 6, kind: "main", no: "Etterhev til dobbel størrelse", en: "Let rise until doubled", tags: ["30–45 min"] },
+      { col: 7, from: 0, to: 7, kind: "main", no: "Trykk en dyp grop i hver bolle og fyll med vaniljekrem", en: "Press a deep hollow into each bun and fill with custard" },
+      { col: 8, from: 0, to: 7, kind: "main", no: "Stek midt i ovnen", en: "Bake in the middle of the oven", tags: [{ no: "220 °C", en: "220 °C / 425 °F" }, "10–12 min"] },
+      { col: 8, from: 8, to: 9, kind: "prep", no: "Rør til en tykk glasur", en: "Stir into a thick icing" },
+      { col: 9, from: 0, to: 9, kind: "main", no: "Avkjøl, og smør glasur rundt kremen", en: "Cool, then spread icing around the custard" },
+      { col: 10, from: 0, to: 10, kind: "final", no: "Dryss over kokos", en: "Sprinkle with coconut" }
+    ],
+    no: {
+      title: "Skolebrød", sub: "Boller med vaniljekrem, glasur og kokos", main: "Deigen",
+      unit: "skolebrød", count: "Antall skolebrød", time: "Ca. 2 t",
+      facts: ["Ca. {n} skolebrød", "Ca. 2 timer", "Ovn 220 °C"],
+      tips: [
+        ["Samme deig.", "Deigen er den samme som til hveteboller."],
+        ["Vaniljekrem.", "Ferdig vaniljekrem til bakst går fint. Hjemmelaget krem må være helt kald og tykk."],
+        ["Glasuren.", "Glasuren skal være så tykk at den så vidt renner. Smør den rundt kremen, ikke over."]
+      ]
+    },
+    en: {
+      title: "Skolebrød", sub: "Buns with vanilla custard, icing and coconut", main: "Dough",
+      unit: "buns", count: "Number of buns", time: "About 2 h",
+      facts: ["Makes about {n}", "About 2 hours", "Oven 220 °C / 425 °F"],
+      tips: [
+        ["Same dough.", "The dough is the same as for hveteboller."],
+        ["Custard.", "Ready-made baking custard works well. Homemade custard must be completely cold and thick."],
+        ["Icing.", "The icing should be just thick enough to barely run. Spread it around the custard, not over it."]
+      ]
+    }
+  },
+
+  {
+    id: "hvetebrod", cat: "bake", group: "yeast",
+    yield: { base: 2, step: 1 },
+    vars: (f) => {
+      const q = spoon(f);
+      return { loaves: q.text, lp: q.value > 1 ? "many" : "1", rolls: String(Math.max(1, Math.round(12 * f))) };
+    },
+    ing: [
+      { kind: "liquid", ml: 300, no: "lunkent vann", en: "lukewarm water" },
+      { kind: "g", g: 15, no: "fersk gjær", en: "fresh yeast" },
+      { kind: "tsp", v: 2, no: "salt", en: "salt" },
+      { kind: "tbsp", v: 4, no: "olje", en: "oil" },
+      { kind: "g", g: 400, perCup: 125, no: "hvetemel", en: "all-⁠purpose flour" },
+      { kind: "count", v: 1, optional: true, no: "egg (valgfritt)", en: "egg (optional)" }
+    ],
+    steps: [
+      { col: 1, from: 0, to: 1, kind: "main", no: "Rør ut gjæren i vannet", en: "Stir the yeast into the water" },
+      { col: 2, from: 0, to: 4, kind: "main", no: "Bland inn salt, olje og halvparten av melet. Elt inn resten litt etter litt til deigen er smidig og elastisk", en: "Mix in the salt, oil and half the flour. Knead in the rest a little at a time until the dough is smooth and elastic", tags: [{ no: "ca. 10 min", en: "about 10 min" }] },
+      { col: 3, from: 0, to: 4, kind: "main", no: "La deigen hvile tildekket", en: "Cover and let the dough rest", tags: ["20–25 min"] },
+      { col: 4, from: 0, to: 4, kind: "main", no: "Form {n} {n|baguett|baguetter}, {loaves} brød i smurt form, eller {rolls} {rolls|rundstykke|rundstykker}", en: "Shape {n} {n|baguette|baguettes}, {loaves} {lp|loaf|loaves} in a greased tin, or {rolls} {rolls|roll|rolls}" },
+      { col: 5, from: 0, to: 4, kind: "main", no: "Etterhev tildekket", en: "Cover and let rise again", tags: [{ no: "Baguett og brød: ca. 1 time", en: "Baguettes and loaf: about 1 hour" }, { no: "Rundstykker: ca. 30 min", en: "Rolls: about 30 min" }] },
+      { col: 6, from: 0, to: 5, kind: "main", pre: { no: "(Valgfritt: pensle med sammenvispet egg)", en: "(Optional: brush with beaten egg)" }, no: "Skjær noen dype snitt i baguetter og brød", en: "Cut a few deep slashes in baguettes and loaves" },
+      { col: 7, from: 0, to: 5, kind: "main", w: "9.5rem", no: "Stek", en: "Bake", tags: [{ no: "Baguett: 250 °C, ca. 20 min", en: "Baguettes: 250 °C / 480 °F, about 20 min" }, { no: "Brød: 200 °C, 35–40 min", en: "Loaf: 200 °C / 400 °F, 35–40 min" }, { no: "Rundstykker: 225 °C, 10–12 min", en: "Rolls: 225 °C / 440 °F, 10–12 min" }] },
+      { col: 8, from: 0, to: 5, kind: "final", no: "Avkjøl på rist", en: "Cool on a rack" }
+    ],
+    no: {
+      title: "Hvetebrød / baguett / rundstykker", sub: "Én deig, tre former", main: "Deigen",
+      unit: "baguetter", count: "Antall baguetter", time: "Ca. 2 t",
+      facts: ["{n} {n|baguett|baguetter}, {loaves} brød eller {rolls} {rolls|rundstykke|rundstykker}", "Ca. 2 timer", "Ovn 200–250 °C"],
+      tips: [
+        ["Tre former.", "Deigen er den samme, men steken er ulik. Baguetter og rundstykker stekes varmt og kort, så skorpen blir sprø. Brød i form trenger lavere varme og lengre tid for å bli gjennomstekt."],
+        ["Rundstykker.", "Del deigen i ca. {rolls} like store biter og trill dem runde. Pensle med vann eller egg, og dryss gjerne over valmuefrø."],
+        ["Sprø skorpe.", "Sett en ildfast form med vann nederst i ovnen mens den varmes opp. Dampen gir sprøere skorpe."],
+        ["Melet.", "Bruk litt ekstra mel på bakebordet når du former. Deigen skal være myk, men ikke klissete."],
+        ["Er det ferdig?", "Bank lett under brødet. Det skal låte hult."]
+      ]
+    },
+    en: {
+      title: "Hvetebrød / baguett / rundstykker", sub: "White bread, baguettes or rolls from one dough", main: "Dough",
+      unit: "baguettes", count: "Number of baguettes", time: "About 2 h",
+      facts: ["{n} {n|baguette|baguettes}, {loaves} {lp|loaf|loaves} or {rolls} {rolls|roll|rolls}", "About 2 hours", "Oven 200–250 °C / 400–480 °F"],
+      tips: [
+        ["Three shapes.", "The dough is the same, but the baking differs. Baguettes and rolls bake hot and short for a crisp crust. A loaf in a tin needs lower heat and more time to bake through."],
+        ["Rolls.", "Divide the dough into about {rolls} equal pieces and roll them round. Brush with water or egg, and sprinkle with poppy seeds if you like."],
+        ["Crisp crust.", "Put an ovenproof dish of water on the bottom of the oven while it heats. The steam gives a crisper crust."],
+        ["Flour.", "Use a little extra flour on the worktop when shaping. The dough should be soft but not sticky."],
+        ["Is it done?", "Tap the bottom of the bread. It should sound hollow."]
+      ]
+    }
+  },
+
+  {
+    id: "grovbrod", cat: "bake", group: "yeast",
+    yield: { base: 1, step: 1 },
+    ing: [
+      { kind: "liquid", ml: 400, no: "lunkent vann", en: "lukewarm water" },
+      { kind: "tbsp", v: 2, no: "olje", en: "oil" },
+      { kind: "g", g: 12, no: "tørrgjær", en: "dry yeast" },
+      { kind: "tsp", v: 1, no: "salt", en: "salt" },
+      { kind: "g", g: 200, no: "grov sammalt hvete", en: "coarse wholemeal flour" },
+      { kind: "g", g: 100, no: "fin sammalt rug", en: "fine rye flour" },
+      { kind: "g", g: 300, perCup: 125, no: "hvetemel", en: "all-⁠purpose flour" }
+    ],
+    steps: [
+      { col: 1, from: 2, to: 6, kind: "prep", no: "Bland mel, salt og gjær", en: "Mix the flours, salt and yeast" },
+      { col: 2, from: 0, to: 6, kind: "main", no: "Tilsett vann og olje, og elt til en myk, smidig deig", en: "Add the water and oil and knead to a soft, smooth dough", tags: [{ no: "ca. 10 min", en: "about 10 min" }] },
+      { col: 3, from: 0, to: 6, kind: "main", no: "Hev tildekket til dobbel størrelse", en: "Cover and let rise until doubled", tags: [{ no: "ca. 1 time", en: "about 1 hour" }] },
+      { col: 4, from: 0, to: 6, kind: "main", no: "Elt deigen sammen, form et brød og legg det i en smurt brødform", en: "Knock back, shape a loaf and put it in a greased loaf tin", tags: [{ no: "1,5–2 l form", en: "1.5–2 l tin" }] },
+      { col: 5, from: 0, to: 6, kind: "main", no: "Snitt toppen, sikt over litt mel og etterhev til dobbel størrelse", en: "Slash the top, dust with flour and let rise until doubled", tags: ["30–45 min"] },
+      { col: 6, from: 0, to: 6, kind: "main", no: "Stek nederst i ovnen", en: "Bake on the lowest rack", tags: [{ no: "200 °C", en: "200 °C / 400 °F" }, { no: "ca. 45 min", en: "about 45 min" }] },
+      { col: 7, from: 0, to: 6, kind: "final", no: "Avkjøl på rist", en: "Cool on a rack" }
+    ],
+    no: {
+      title: "Grovbrød", sub: "Hverdagsbrød med sammalt hvete og rug", main: "Deigen",
+      unit: "brød", count: "Antall brød", time: "Ca. 2 t 30 min",
+      facts: ["{n} brød", "Ca. 2 t 30 min", "Ovn 200 °C"],
+      tips: [
+        ["Myk deig.", "Deigen skal være så bløt som mulig uten å klistre. Tilsett litt mer vann ved behov."],
+        ["Sprø skorpe.", "Pensle brødet med litt vann og dryss over mel før steking."],
+        ["Rundstykker.", "Samme deig gir ca. 12 grove rundstykker. Stek dem i 10–15 min."],
+        ["Gjær.", "En pose tørrgjær er 12 g. Bruker du fersk gjær, tar du ca. 50 g og rører den ut i vannet."]
+      ]
+    },
+    en: {
+      title: "Grovbrød", sub: "Everyday bread with wholemeal wheat and rye", main: "Dough",
+      unit: "loaves", count: "Number of loaves", time: "About 2 h 30 min",
+      facts: ["{n} {n|loaf|loaves}", "About 2 h 30 min", "Oven 200 °C / 400 °F"],
+      tips: [
+        ["Soft dough.", "The dough should be as soft as possible without sticking. Add a little more water if needed."],
+        ["Crisp crust.", "Brush the loaf with a little water and dust with flour before baking."],
+        ["Rolls.", "The same dough makes about 12 wholemeal rolls. Bake them for 10–15 min."],
+        ["Yeast.", "A Norwegian packet of dry yeast is 12 g. With fresh yeast, use about 50 g and dissolve it in the water."]
+      ]
+    }
+  },
+
+  {
+    id: "eltefritt", cat: "bake", group: "yeast",
+    yield: { base: 1, step: 1 },
+    ing: [
+      { kind: "g", g: 500, perCup: 125, no: "hvetemel", en: "all-⁠purpose flour" },
+      { kind: "tsp", v: 1, no: "salt", en: "salt" },
+      { kind: "tsp", v: 0.25, no: "tørrgjær", en: "dry yeast" },
+      { kind: "liquid", ml: 400, no: "vann", en: "water" }
+    ],
+    steps: [
+      { col: 1, from: 0, to: 3, kind: "main", no: "Rør sammen til en løs deig, og dekk til", en: "Stir together to a loose dough and cover" },
+      { col: 2, from: 0, to: 3, kind: "main", no: "La deigen heve på benken", en: "Leave to rise on the counter", tags: [{ no: "12–18 timer", en: "12–18 hours" }, { no: "gjerne over natten", en: "ideally overnight" }] },
+      { col: 3, from: 0, to: 3, kind: "main", no: "Brett kantene inn mot midten med en deigskrape, ca. 10 ganger", en: "Fold the edges into the middle with a dough scraper, about 10 times" },
+      { col: 4, from: 0, to: 3, kind: "main", no: "Snu deigen, dekk til og la den hvile. Varm ovnen med gryta i imens", en: "Turn the dough over, cover and let it rest. Meanwhile heat the oven with the pot inside", tags: [{ no: "2 timer", en: "2 hours" }, { no: "250 °C", en: "250 °C / 480 °F" }] },
+      { col: 5, from: 0, to: 3, kind: "main", no: "Legg deigen i den varme gryta, dryss over mel og stek med lokk", en: "Put the dough in the hot pot, dust with flour and bake with the lid on", tags: ["30 min"] },
+      { col: 6, from: 0, to: 3, kind: "main", no: "Ta av lokket, senk varmen og stek ferdig", en: "Remove the lid, lower the heat and finish baking", tags: [{ no: "200 °C", en: "200 °C / 400 °F" }, { no: "ca. 15 min", en: "about 15 min" }] },
+      { col: 7, from: 0, to: 3, kind: "final", no: "Avkjøl på rist", en: "Cool on a rack" }
+    ],
+    no: {
+      title: "Eltefritt brød", sub: "Grytebrød uten elting, hevet over natten", main: "Deigen",
+      unit: "brød", count: "Antall brød", time: "15–21 t",
+      facts: ["{n} brød", "15–21 timer, nesten bare venting", "Støpejernsgryte Ø24 cm"],
+      tips: [
+        ["Gryta.", "En støpejernsgryte med lokk gir sprø skorpe. Den må være skikkelig varm før deigen legges i."],
+        ["Løs deig.", "Deigen skal være svært løs og klissete. Bruk deigskrape og litt mel på overflaten, ikke mer mel i deigen."],
+        ["Flere brød.", "Stek ett brød om gangen, eller bruk flere gryter."]
+      ]
+    },
+    en: {
+      title: "Eltefritt brød", sub: "No-knead pot bread, risen overnight", main: "Dough",
+      unit: "loaves", count: "Number of loaves", time: "15–21 h",
+      facts: ["{n} {n|loaf|loaves}", "15–21 hours, mostly waiting", "Cast-iron pot Ø24 cm"],
+      tips: [
+        ["The pot.", "A lidded cast-iron pot gives a crisp crust. It must be properly hot before the dough goes in."],
+        ["Loose dough.", "The dough is meant to be very loose and sticky. Use a dough scraper and a little flour on the surface, not more flour in the dough."],
+        ["More loaves.", "Bake one loaf at a time, or use more pots."]
+      ]
+    }
+  },
+
+  {
+    id: "surdeig", cat: "bake", group: "yeast",
+    yield: { base: 2, step: 1 },
+    ing: [
+      { kind: "g", g: 760, no: "vann", en: "water" },
+      { kind: "g", g: 800, perCup: 125, no: "hvetemel (spesial)", en: "bread flour" },
+      { kind: "g", g: 200, optional: true, no: "fullkornsmel (valgfritt)", en: "wholemeal flour (optional)" },
+      { kind: "g", g: 200, no: "aktiv surdeig", en: "active sourdough starter" },
+      { kind: "g", g: 22, no: "salt", en: "salt" }
+    ],
+    steps: [
+      { col: 1, from: 0, to: 2, kind: "main", no: "Elt vann og mel i kjøkkenmaskin på lav hastighet", en: "Mix the water and flour in a stand mixer on low speed", tags: ["10–15 min"] },
+      { col: 2, from: 0, to: 3, kind: "main", no: "Tilsett surdeigen (spar 1 ss til mating) og elt videre", en: "Add the starter (keep 1 tbsp to feed) and mix on", tags: ["5 min"] },
+      { col: 3, from: 0, to: 4, kind: "main", no: "Tilsett saltet og elt videre", en: "Add the salt and mix on", tags: ["5 min"] },
+      { col: 4, from: 0, to: 4, kind: "main", no: "Brett deigen tre ganger med våte hender, med minst 30 min mellom", en: "Fold the dough three times with wet hands, at least 30 min apart" },
+      { col: 5, from: 0, to: 4, kind: "main", no: "La deigen heve til den er luftig og boblete", en: "Let the dough rise until airy and bubbly", tags: [{ no: "3–6 timer", en: "3–6 hours" }, { no: "helst ca. 26 °C", en: "ideally about 26 °C" }] },
+      { col: 6, from: 0, to: 4, kind: "main", no: "Del i {n} {n|emne|emner}, form dem runde og la dem hvile", en: "Divide into {n} {n|piece|pieces}, shape into rounds and let rest", tags: ["15–30 min"] },
+      { col: 7, from: 0, to: 4, kind: "main", no: "Form brødene, legg dem med skjøten opp i hevekurver og sett dem i kjøleskapet", en: "Shape the loaves, put them seam side up in proofing baskets and refrigerate", tags: [{ no: "8–24 timer", en: "8–24 hours" }] },
+      { col: 8, from: 0, to: 4, kind: "main", no: "Snitt brødet og stek det i en forvarmet gryte med lokk", en: "Score the loaf and bake it in a preheated pot with the lid on", tags: [{ no: "250 °C", en: "250 °C / 480 °F" }, "25 min"] },
+      { col: 9, from: 0, to: 4, kind: "main", no: "Ta brødet ut av gryta og stek det ferdig", en: "Take the loaf out of the pot and finish baking", tags: ["15–20 min"] },
+      { col: 10, from: 0, to: 4, kind: "final", no: "Avkjøl på rist", en: "Cool on a rack" }
+    ],
+    no: {
+      title: "Surdeigsbrød", sub: "Luftig brød med aktiv surdeig og kald heving", main: "Deigen",
+      unit: "brød", count: "Antall brød", time: "Ca. 1 døgn",
+      facts: ["{n} brød", "Ca. 1 døgn, mest heving", "Ovn 250 °C"],
+      tips: [
+        ["Aktiv surdeig.", "Surdeigen skal ha doblet seg siden siste mating. Har du ingen, kan du dyrke en av mel og vann på ca. en uke."],
+        ["Temperatur.", "Hevetiden avhenger av temperaturen. Deigen hever raskest ved ca. 26 °C."],
+        ["Uten fullkorn.", "Bytt ut fullkornsmelet med like mye hvetemel."],
+        ["Ett om gangen.", "Stek brødene etter hverandre. Det neste kan vente i kjøleskapet, så lenge det stekes innen 24 timer."]
+      ]
+    },
+    en: {
+      title: "Surdeigsbrød", sub: "Open-crumb bread with an active starter and a cold rise", main: "Dough",
+      unit: "loaves", count: "Number of loaves", time: "About 24 h",
+      facts: ["{n} {n|loaf|loaves}", "About 24 hours, mostly rising", "Oven 250 °C / 480 °F"],
+      tips: [
+        ["Active starter.", "The starter should have doubled since its last feed. If you don't have one, you can grow one from flour and water in about a week."],
+        ["Temperature.", "Rising time depends on temperature. The dough rises fastest at about 26 °C."],
+        ["No wholemeal.", "Replace the wholemeal flour with the same amount of bread flour."],
+        ["One at a time.", "Bake the loaves one after the other. The next can wait in the fridge, as long as it is baked within 24 hours."]
+      ]
+    }
+  },
+
+  {
+    id: "kjottkaker", cat: "dinner", group: "stews",
+    yield: { base: 4, step: 1 },
+    vars: (f) => ({ cakes: String(Math.max(1, Math.round(12 * f))) }),
+    ing: [
+      { kind: "g", g: 500, perLb: true, no: "kjøttdeig (storfe)", en: "ground beef" },
+      { kind: "tsp", v: 1.5, no: "salt", en: "salt" },
+      { kind: "tbsp", v: 2.5, no: "potetmel", en: "potato starch" },
+      { kind: "tsp", v: 0.25, no: "pepper", en: "pepper" },
+      { kind: "tsp", v: 0.25, no: "malt muskat", en: "ground nutmeg" },
+      { kind: "tsp", v: 0.25, no: "malt ingefær", en: "ground ginger" },
+      { kind: "liquid", ml: 200, no: "melk", en: "milk" },
+      { kind: "tbsp", v: 2, no: "smør (til steking)", en: "butter (for frying)" },
+      { kind: "tbsp", v: 3, no: "smør (til sausen)", en: "butter (for the gravy)" },
+      { kind: "tbsp", v: 3, no: "hvetemel", en: "all-⁠purpose flour" },
+      { kind: "liquid", ml: 750, no: "kjøttkraft", en: "beef stock" },
+      { kind: "text", key: "taste", no: "salt og pepper", en: "salt and pepper" },
+      { kind: "g", g: 800, kg: true, perLb: true, no: "poteter (til servering)", en: "potatoes (to serve)" },
+      { kind: "text", key: "taste", optional: true, no: "tyttebær (til servering)", en: "lingonberry jam (to serve)" }
+    ],
+    steps: [
+      { col: 1, from: 0, to: 1, kind: "main", no: "Arbeid saltet inn i kjøttdeigen til farsen er seig", en: "Work the salt into the mince until it turns sticky" },
+      { col: 1, from: 12, to: 12, kind: "prep", no: "Skrell", en: "Peel" },
+      { col: 2, from: 0, to: 5, kind: "main", no: "Arbeid inn potetmel og krydder", en: "Work in the potato starch and spices" },
+      { col: 2, from: 12, to: 12, kind: "prep", no: "Kok møre i lettsaltet vann", en: "Boil in lightly salted water until tender", tags: [{ no: "ca. 20 min", en: "about 20 min" }] },
+      { col: 3, from: 0, to: 6, kind: "main", no: "Spe med melken litt om gangen, og arbeid godt mellom hver gang", en: "Add the milk a little at a time, working well after each addition" },
+      { col: 3, from: 8, to: 9, kind: "prep", no: "Brun smør og mel under omrøring til det er nøttebrunt", en: "Brown the butter and flour, stirring, until nut-brown" },
+      { col: 4, from: 0, to: 6, kind: "main", no: "Form ca. {cakes} {cakes|rund kake|runde kaker} med våte hender", en: "Shape about {cakes} {cakes|round cake|round cakes} with wet hands" },
+      { col: 4, from: 8, to: 10, kind: "prep", no: "Spe med varm kraft litt om gangen, og la sausen småkoke", en: "Whisk in hot stock a little at a time and let the gravy simmer", tags: [{ no: "ca. 10 min", en: "about 10 min" }] },
+      { col: 5, from: 0, to: 7, kind: "main", no: "Stek kakene i smør i en middels varm panne", en: "Fry the cakes in butter in a medium-hot pan", tags: [{ no: "ca. 2 min per side", en: "about 2 min per side" }] },
+      { col: 6, from: 0, to: 10, kind: "main", no: "Legg kakene i sausen og la dem trekke", en: "Put the cakes in the gravy and let them simmer gently", tags: [{ no: "ca. 10 min", en: "about 10 min" }] },
+      { col: 7, from: 0, to: 11, kind: "main", no: "Smak til med salt og pepper", en: "Season with salt and pepper" },
+      { col: 8, from: 0, to: 13, kind: "final", no: "Server med poteter og tyttebær", en: "Serve with potatoes and lingonberry jam" }
+    ],
+    no: {
+      title: "Kjøttkaker i brun saus", sub: "Hjemmelagde kjøttkaker med brun saus og poteter", main: "Kjøttkakene",
+      unit: "porsjoner", count: "Antall porsjoner", time: "Ca. 1 t",
+      facts: ["{n} {n|porsjon|porsjoner}", "Ca. 1 time", "Ca. {cakes} {cakes|kake|kaker}"],
+      tips: [
+        ["Seig farse.", "Saltet gjør farsen seig, så kakene holder formen. Arbeid den godt før du sper med melken."],
+        ["Brun saus.", "Brun smør og mel på lav varme og rør hele tiden, så det ikke svir seg. Varm kraft gir en klumpfri saus."],
+        ["Tilbehør.", "Ertestuing eller kålstuing passer godt til."]
+      ]
+    },
+    en: {
+      title: "Kjøttkaker i brun saus", sub: "Norwegian meat cakes in brown gravy", main: "Meat cakes",
+      unit: "servings", count: "Servings", time: "About 1 h",
+      facts: ["{n} {n|serving|servings}", "About 1 hour", "About {cakes} {cakes|meat cake|meat cakes}"],
+      tips: [
+        ["Sticky mince.", "The salt makes the mince sticky, so the cakes hold their shape. Work it well before adding the milk."],
+        ["Brown gravy.", "Brown the butter and flour over low heat and stir all the time so it doesn't burn. Hot stock gives a smooth gravy."],
+        ["Sides.", "Mushy peas (ertestuing) or creamed cabbage (kålstuing) go well with it."]
+      ]
+    }
+  },
+
+  {
+    id: "farikal", cat: "dinner", group: "stews",
+    yield: { base: 4, step: 1 },
+    ing: [
+      { kind: "g", g: 1500, kg: true, perLb: true, no: "fårikålkjøtt (lam på bein)", en: "lamb (on the bone)" },
+      { kind: "g", g: 1500, kg: true, perLb: true, no: "hodekål", en: "white cabbage" },
+      { kind: "tsp", v: 4, no: "pepperkorn", en: "black peppercorns" },
+      { kind: "tsp", v: 2, no: "salt", en: "salt" },
+      { kind: "tbsp", v: [1, 2], optional: true, no: "hvetemel (valgfritt)", en: "all-⁠purpose flour (optional)" },
+      { kind: "liquid", ml: 300, no: "vann", en: "water" },
+      { kind: "g", g: 1000, kg: true, perLb: true, no: "poteter (til servering)", en: "potatoes (to serve)" }
+    ],
+    steps: [
+      { col: 1, from: 1, to: 1, kind: "prep", no: "Skjær i båter, 2–4 cm tykke", en: "Cut into wedges 2–4 cm thick" },
+      { col: 1, from: 6, to: 6, kind: "prep", no: "Skrell", en: "Peel" },
+      { col: 2, from: 0, to: 4, kind: "main", pre: { no: "(Valgfritt: mel mellom lagene gir tykkere kraft)", en: "(Optional: flour between the layers thickens the broth)" }, no: "Legg kjøtt og kål lagvis i gryta, med kjøttet nederst. Dryss salt og pepper mellom lagene", en: "Layer meat and cabbage in the pot, meat at the bottom. Sprinkle salt and pepper between the layers" },
+      { col: 3, from: 0, to: 5, kind: "main", no: "Hell over vannet og kok opp", en: "Pour in the water and bring to a boil" },
+      { col: 4, from: 0, to: 5, kind: "main", no: "Småkok under lokk til kjøttet slipper beinet", en: "Simmer, covered, until the meat comes off the bone", tags: [{ no: "ca. 2½ time", en: "about 2½ hours" }] },
+      { col: 4, from: 6, to: 6, kind: "prep", no: "Kok møre i lettsaltet vann", en: "Boil in lightly salted water until tender", tags: [{ no: "ca. 20 min", en: "about 20 min" }] },
+      { col: 5, from: 0, to: 6, kind: "final", no: "Server rykende varm med potetene", en: "Serve piping hot with the potatoes" }
+    ],
+    no: {
+      title: "Fårikål", sub: "Lam og kål i gryte, Norges nasjonalrett", main: "Gryta",
+      unit: "porsjoner", count: "Antall porsjoner", time: "Ca. 3 t",
+      facts: ["{n} {n|porsjon|porsjoner}", "Ca. 3 timer", "Stor gryte"],
+      tips: [
+        ["Pepperkorn.", "Legg pepperkornene i en tepose eller krydderkule hvis du vil fjerne dem før servering."],
+        ["Kjøttet.", "Legg kjøttbitene nederst i gryta med fettsiden ned."],
+        ["Dagen derpå.", "Fårikål blir gjerne enda bedre når den varmes opp dagen etter."],
+        ["Tilbehør.", "Flatbrød og tyttebærsyltetøy passer godt til."]
+      ]
+    },
+    en: {
+      title: "Fårikål", sub: "Lamb and cabbage stew, Norway's national dish", main: "The pot",
+      unit: "servings", count: "Servings", time: "About 3 h",
+      facts: ["{n} {n|serving|servings}", "About 3 hours", "Large pot"],
+      tips: [
+        ["Peppercorns.", "Put the peppercorns in a tea bag or spice ball if you want to remove them before serving."],
+        ["The meat.", "Put the meat at the bottom of the pot, fat side down."],
+        ["Next day.", "Fårikål is often even better reheated the next day."],
+        ["Sides.", "Flatbread (flatbrød) and lingonberry jam go well with it."]
+      ]
+    }
+  },
+
+  {
+    id: "pannekaker", cat: "dinner", group: "pan",
+    yield: { base: 8, step: 2 },
+    ing: [
+      { kind: "liquid", ml: 300, no: "hvetemel", en: "all-⁠purpose flour" },
+      { kind: "tsp", v: 0.5, no: "salt", en: "salt" },
+      { kind: "liquid", ml: 500, no: "melk", en: "milk" },
+      { kind: "count", v: 4, no: "egg", en: ["egg", "eggs"] },
+      { kind: "tbsp", v: 1, no: "smør (til steking)", en: "butter (for frying)" },
+      { kind: "text", key: "taste", optional: true, no: "blåbær­syltetøy (til servering)", en: "blueberry jam (to serve)" }
+    ],
+    steps: [
+      { col: 1, from: 0, to: 1, kind: "main", no: "Bland mel og salt", en: "Mix the flour and salt" },
+      { col: 2, from: 0, to: 2, kind: "main", no: "Visp inn halvparten av melken til en tykk, klumpfri røre, og deretter resten", en: "Whisk in half the milk to a thick, smooth batter, then the rest" },
+      { col: 3, from: 0, to: 3, kind: "main", no: "Visp inn eggene", en: "Whisk in the eggs" },
+      { col: 4, from: 0, to: 3, kind: "main", no: "La røren svelle", en: "Let the batter rest", tags: [{ no: "ca. 30 min", en: "about 30 min" }] },
+      { col: 5, from: 0, to: 4, kind: "main", no: "Stek tynne pannekaker i smør i en varm panne. Snu når oversiden har stivnet", en: "Fry thin pancakes in butter in a hot pan. Flip when the top has set" },
+      { col: 6, from: 0, to: 5, kind: "final", no: "Server med blåbær­syltetøy", en: "Serve with blueberry jam" }
+    ],
+    no: {
+      title: "Pannekaker", sub: "Tynne norske pannekaker, gjerne til middag", main: "Røren",
+      unit: "pannekaker", count: "Antall pannekaker", time: "Ca. 45 min",
+      facts: ["{n} {n|pannekake|pannekaker}", "Ca. 45 min inkl. svelling", "Stekepanne"],
+      tips: [
+        ["Hold dem varme.", "Brett de ferdige pannekakene og legg dem i en ildfast form med lokk til alle er stekt."],
+        ["Tilbehør.", "Bacon, smør og sukker eller brunost er gode alternativer til syltetøy."],
+        ["Grovere.", "Bytt ut halvparten av melet med sammalt hvetemel."]
+      ]
+    },
+    en: {
+      title: "Pannekaker", sub: "Thin Norwegian pancakes, often eaten for dinner", main: "Batter",
+      unit: "pancakes", count: "Number of pancakes", time: "About 45 min",
+      facts: ["{n} {n|pancake|pancakes}", "About 45 min incl. resting", "Frying pan"],
+      tips: [
+        ["Keep them warm.", "Fold the finished pancakes and keep them in a covered ovenproof dish until all are done."],
+        ["Toppings.", "Bacon, butter and sugar, or brown cheese (brunost) are good alternatives to jam."],
+        ["Wholemeal.", "Replace half the flour with wholemeal flour."]
+      ]
+    }
+  },
+
+  {
+    id: "orret", cat: "dinner", group: "pan",
+    yield: { base: 4, step: 1 },
+    ing: [
+      { kind: "g", g: 600, perLb: true, no: "ørretfilet (med skinn)", en: "trout fillets (skin on)" },
+      { kind: "tsp", v: 1, no: "salt", en: "salt" },
+      { kind: "tsp", v: 0.5, no: "pepper", en: "pepper" },
+      { kind: "tbsp", v: 3, no: "smør", en: "butter" },
+      { kind: "tbsp", v: 2, optional: true, no: "dill eller persille (valgfritt)", en: "dill or parsley (optional)" },
+      { kind: "count", v: 1, half: true, optional: true, no: "sitron (til servering)", en: ["lemon (to serve)", "lemons (to serve)"] }
+    ],
+    steps: [
+      { col: 1, from: 0, to: 0, kind: "prep", no: "Tørk filetene godt med kjøkkenpapir", en: "Pat the fillets dry with kitchen paper" },
+      { col: 2, from: 0, to: 2, kind: "main", no: "Krydre med salt og pepper", en: "Season with salt and pepper" },
+      { col: 3, from: 0, to: 3, kind: "main", no: "Stek med skinnsiden ned i smør i en middels varm panne", en: "Fry skin side down in butter in a medium-hot pan", tags: ["3–4 min"] },
+      { col: 4, from: 0, to: 4, kind: "main", pre: { no: "(Valgfritt: ha urtene i smøret)", en: "(Optional: add the herbs to the butter)" }, no: "Snu og stek ferdig mens du øser smøret over fisken", en: "Flip and finish cooking while spooning the butter over the fish", tags: ["1–2 min"] },
+      { col: 5, from: 0, to: 5, kind: "final", no: "Server straks med sitronbåter", en: "Serve at once with lemon wedges" }
+    ],
+    no: {
+      title: "Stekt ørret", sub: "Ørret stekt i smør, enkelt og godt", main: "Fisken",
+      unit: "porsjoner", count: "Antall porsjoner", time: "Ca. 15 min",
+      facts: ["{n} {n|porsjon|porsjoner}", "Ca. 15 min", "Stekepanne"],
+      tips: [
+        ["Sprøtt skinn.", "Tørr fisk og godt varm panne gir sprøtt skinn. La filetene ligge i ro til de slipper pannen."],
+        ["Hel ørret.", "Små, hele ørreter kan stekes på samme måte, ca. 4–5 min på hver side."],
+        ["Tilbehør.", "Kokte poteter, rømme og agurksalat passer godt til."]
+      ]
+    },
+    en: {
+      title: "Stekt ørret", sub: "Pan-fried trout in butter", main: "The fish",
+      unit: "servings", count: "Servings", time: "About 15 min",
+      facts: ["{n} {n|serving|servings}", "About 15 min", "Frying pan"],
+      tips: [
+        ["Crisp skin.", "Dry fish and a properly hot pan give crisp skin. Leave the fillets alone until they release from the pan."],
+        ["Whole trout.", "Small whole trout can be fried the same way, about 4–5 min per side."],
+        ["Sides.", "Boiled potatoes, sour cream and cucumber salad go well with it."]
+      ]
+    }
+  },
+
+  {
+    id: "fiskesuppe", cat: "dinner", group: "stews",
+    yield: { base: 4, step: 1 },
+    ing: [
+      { kind: "tbsp", v: 2, no: "smør", en: "butter" },
+      { kind: "tbsp", v: 2, no: "hvetemel", en: "all-⁠purpose flour" },
+      { kind: "liquid", ml: 1000, no: "fiskekraft", en: "fish stock" },
+      { kind: "count", v: 2, half: true, no: ["gulrot", "gulrøtter"], en: ["carrot", "carrots"] },
+      { kind: "count", v: 1, half: true, no: ["persillerot", "persillerøtter"], en: ["parsley root", "parsley roots"] },
+      { kind: "count", v: 1, no: ["skive sellerirot", "skiver sellerirot"], en: ["slice of celeriac", "slices of celeriac"] },
+      { kind: "liquid", ml: 100, no: "kremfløte", en: "whipping cream" },
+      { kind: "count", v: 2, no: ["eggeplomme", "eggeplommer"], en: ["egg yolk", "egg yolks"] },
+      { kind: "g", g: 400, perLb: true, no: "hvit fisk (f.eks. torsk)", en: "white fish (e.g. cod)" },
+      { kind: "g", g: 150, perLb: true, optional: true, no: "reker (valgfritt)", en: "shrimp (optional)" },
+      { kind: "count", v: 0.5, half: true, no: "sitron (saften)", en: "lemon (juice)" },
+      { kind: "text", key: "taste", no: "salt og pepper", en: "salt and pepper" },
+      { kind: "tbsp", v: 2, no: "gressløk (hakket)", en: "chives (chopped)" }
+    ],
+    steps: [
+      { col: 1, from: 0, to: 1, kind: "main", no: "Smelt smøret og rør inn melet", en: "Melt the butter and stir in the flour" },
+      { col: 1, from: 3, to: 5, kind: "prep", no: "Skjær i tynne strimler", en: "Cut into thin strips" },
+      { col: 1, from: 6, to: 7, kind: "prep", no: "Visp sammen", en: "Whisk together" },
+      { col: 1, from: 8, to: 8, kind: "prep", no: "Skjær i terninger", en: "Cut into cubes" },
+      { col: 2, from: 0, to: 2, kind: "main", no: "Spe med kraften under omrøring til en klumpfri suppe, og kok opp", en: "Whisk in the stock to a smooth soup and bring to a boil" },
+      { col: 3, from: 0, to: 5, kind: "main", no: "Kok grønnsakene møre i suppen", en: "Simmer the vegetables in the soup until tender", tags: ["5–7 min"] },
+      { col: 4, from: 0, to: 7, kind: "main", no: "Rør inn fløteblandingen og varm suppen uten at den koker", en: "Stir in the cream mix and heat without boiling" },
+      { col: 5, from: 0, to: 9, kind: "main", pre: { no: "(Valgfritt: legg i rekene helt til slutt)", en: "(Optional: add the shrimp at the very end)" }, no: "Legg i fisken og la den trekke til den er ferdig", en: "Add the fish and let it poach until done", tags: ["4–5 min"] },
+      { col: 6, from: 0, to: 11, kind: "main", no: "Smak til med sitronsaft, salt og pepper", en: "Season with lemon juice, salt and pepper" },
+      { col: 7, from: 0, to: 12, kind: "final", no: "Dryss over gressløk og server", en: "Sprinkle with chives and serve" }
+    ],
+    no: {
+      title: "Fiskesuppe", sub: "Kremet fiskesuppe med grønnsaksstrimler", main: "Suppen",
+      unit: "porsjoner", count: "Antall porsjoner", time: "Ca. 40 min",
+      facts: ["{n} {n|porsjon|porsjoner}", "Ca. 40 min", "Stor kjele"],
+      tips: [
+        ["Fisken.", "Torsk, hyse, sei eller steinbit passer godt. Fisken skal bare trekke, ellers faller den fra hverandre."],
+        ["Uten å koke.", "Eggeplommene kan skille seg hvis suppen koker etter at fløteblandingen er rørt inn."],
+        ["Kraften.", "Hjemmelaget fiskekraft gir best smak, men buljong går også fint."]
+      ]
+    },
+    en: {
+      title: "Fiskesuppe", sub: "Creamy Norwegian fish soup with vegetable strips", main: "The soup",
+      unit: "servings", count: "Servings", time: "About 40 min",
+      facts: ["{n} {n|serving|servings}", "About 40 min", "Large pot"],
+      tips: [
+        ["The fish.", "Cod, haddock, pollock or wolffish all work. The fish should only poach, or it falls apart."],
+        ["No boiling.", "The egg yolks can curdle if the soup boils after the cream mix goes in."],
+        ["Stock.", "Homemade fish stock tastes best, but stock cubes work fine."]
+      ]
+    }
+  },
+
+  {
+    id: "chopsuey", cat: "dinner", group: "pan",
+    yield: { base: 4, step: 1 },
+    ing: [
+      { kind: "g", g: 500, perLb: true, no: "biff (storfe)", en: "beef steak" },
+      { kind: "tsp", v: 0.5, no: "natron", en: "baking soda" },
+      { kind: "tbsp", v: 1, no: "vann", en: "water" },
+      { kind: "tbsp", v: 1, no: "soyasaus", en: "soy sauce" },
+      { kind: "tbsp", v: 2, no: "maisenna", en: "cornstarch" },
+      { kind: "tbsp", v: 2, no: "olje (til steking)", en: "oil (for frying)" },
+      { kind: "count", v: 1, half: true, no: "løk", en: ["onion", "onions"] },
+      { kind: "count", v: 2, no: "fedd hvitløk", en: ["garlic clove", "garlic cloves"] },
+      { kind: "count", v: 1, half: true, no: ["gulrot", "gulrøtter"], en: ["carrot", "carrots"] },
+      { kind: "count", v: 1, half: true, no: "paprika", en: ["bell pepper", "bell peppers"] },
+      { kind: "count", v: 1, half: true, no: "brokkoli", en: ["head of broccoli", "heads of broccoli"] },
+      { kind: "g", g: 200, perLb: true, no: "sjampinjong", en: "mushrooms" },
+      { kind: "count", v: 1, no: ["boks bambusskudd", "bokser bambusskudd"], en: ["can of bamboo shoots", "cans of bamboo shoots"] },
+      { kind: "liquid", ml: 300, no: "kjøttkraft", en: "beef stock" },
+      { kind: "tbsp", v: 3, no: "soyasaus", en: "soy sauce" },
+      { kind: "tbsp", v: 2, no: "østerssaus", en: "oyster sauce" },
+      { kind: "tbsp", v: 1, no: "sukker", en: "sugar" },
+      { kind: "tbsp", v: 1, no: "maisenna", en: "cornstarch" },
+      { kind: "liquid", ml: 300, no: "ris (til servering)", en: "rice (to serve)" }
+    ],
+    steps: [
+      { col: 1, from: 0, to: 0, kind: "prep", no: "Skjær i tynne strimler på tvers av fibrene", en: "Slice thinly across the grain" },
+      { col: 1, from: 1, to: 2, kind: "prep", no: "Rør natronet ut i vannet", en: "Dissolve the baking soda in the water" },
+      { col: 1, from: 6, to: 12, kind: "prep", no: "Skjær grønnsakene i strimler og små buketter", en: "Cut the vegetables into strips and small florets" },
+      { col: 1, from: 13, to: 17, kind: "prep", no: "Rør sammen sausen", en: "Mix the sauce" },
+      { col: 2, from: 0, to: 4, kind: "main", no: "Vend kjøttet i marinaden og la det stå", en: "Toss the beef in the marinade and leave it", tags: [{ no: "ca. 30 min", en: "about 30 min" }] },
+      { col: 2, from: 18, to: 18, kind: "prep", no: "Kok etter anvisningen på pakken", en: "Cook according to the packet" },
+      { col: 3, from: 0, to: 5, kind: "main", no: "Brun kjøttet raskt i svært varm olje, og ta det ut", en: "Sear the beef quickly in very hot oil, then lift it out", tags: ["1–2 min"] },
+      { col: 4, from: 6, to: 12, kind: "prep", no: "Wok grønnsakene i samme panne til de er møre, men sprø", en: "Stir-fry the vegetables in the same pan until tender but crisp", tags: ["3–4 min"] },
+      { col: 5, from: 0, to: 17, kind: "main", no: "Ha i kjøttet og sausen, og kok opp under omrøring til sausen tykner", en: "Add the beef and the sauce and bring to a boil, stirring, until the sauce thickens", tags: ["1–2 min"] },
+      { col: 6, from: 0, to: 18, kind: "final", no: "Server med ris", en: "Serve with rice" }
+    ],
+    no: {
+      title: "Biff chop suey", sub: "Mørt biffkjøtt og sprø grønnsaker i brun saus", main: "Kjøttet",
+      unit: "porsjoner", count: "Antall porsjoner", time: "Ca. 1 t",
+      facts: ["{n} {n|porsjon|porsjoner}", "Ca. 1 time inkl. marinering", "Wok eller stor panne"],
+      tips: [
+        ["Natron.", "Natron gjør kjøttet mørt og saftig, slik som på kinarestaurant. Ikke bruk mer enn oppskriften sier, ellers kan kjøttet smake såpe."],
+        ["Høy varme.", "Bruk høy varme, og stek kjøttet i flere omganger hvis panna er liten. Da blir det brunt i stedet for kokt."],
+        ["Grønnsaker.", "Bønnespirer, vannkastanjer, sukkererter eller babymais passer også godt."]
+      ]
+    },
+    en: {
+      title: "Biff chop suey", sub: "Tender beef and crisp vegetables in a brown sauce", main: "The beef",
+      unit: "servings", count: "Servings", time: "About 1 h",
+      facts: ["{n} {n|serving|servings}", "About 1 hour incl. marinating", "Wok or large pan"],
+      tips: [
+        ["Baking soda.", "Baking soda (natron) makes the beef tender and juicy, the way Chinese restaurants do it. Don't use more than the recipe says, or the meat can taste soapy."],
+        ["High heat.", "Use high heat, and fry the beef in batches if the pan is small, so it browns instead of stewing."],
+        ["Vegetables.", "Bean sprouts, water chestnuts, sugar snap peas or baby corn work well too."]
+      ]
+    }
+  },
+
+  {
+    id: "julekake", cat: "bake", group: "yeast", season: { no: "Jul", en: "Christmas" },
+    yield: { base: 3, step: 1 },
+    ing: [
+      { kind: "g", g: 1000, kg: true, perCup: 125, no: "hvetemel", en: "all-⁠purpose flour" },
+      { kind: "g", g: 200, perCup: 200, no: "sukker", en: "sugar" },
+      { kind: "tsp", v: 2, no: "malt kardemomme", en: "ground cardamom" },
+      { kind: "g", g: 150, perCup: 227, no: "smør", en: "butter" },
+      { kind: "liquid", ml: 750, no: "melk", en: "milk" },
+      { kind: "g", g: 50, no: "fersk gjær", en: "fresh yeast" },
+      { kind: "count", v: 1, no: "egg", en: ["egg", "eggs"] },
+      { kind: "g", g: 200, perCup: 150, no: "rosiner", en: "raisins" },
+      { kind: "g", g: 100, no: "sukat", en: "candied peel" },
+      { kind: "count", v: 1, no: "egg (til pensling)", en: "egg (for brushing)" }
+    ],
+    steps: [
+      { col: 1, from: 0, to: 3, kind: "main", no: "Bland mel, sukker og kardemomme, og smuldre inn smøret", en: "Mix the flour, sugar and cardamom, and rub in the butter" },
+      { col: 1, from: 4, to: 5, kind: "prep", no: "Varm melken til fingervarm og rør ut gjæren", en: "Warm the milk to finger-warm and dissolve the yeast", tags: [{ no: "ca. 37 °C", en: "37 °C / 98 °F" }] },
+      { col: 2, from: 0, to: 6, kind: "main", no: "Tilsett gjærmelken og det sammenvispede egget, og elt godt", en: "Add the yeast milk and the beaten egg, and knead well", tags: [{ no: "ca. 10 min", en: "about 10 min" }] },
+      { col: 3, from: 0, to: 6, kind: "main", no: "Hev tildekket til dobbel størrelse", en: "Cover and let rise until doubled", tags: [{ no: "ca. 1 time", en: "about 1 hour" }] },
+      { col: 4, from: 0, to: 8, kind: "main", no: "Elt inn rosiner og sukat", en: "Knead in the raisins and candied peel" },
+      { col: 5, from: 0, to: 8, kind: "main", no: "Del i {n} {n|del|deler}, form runde kaker og legg dem på smurt stekeplate", en: "Divide into {n} {n|piece|pieces}, shape round loaves and place on a greased baking sheet" },
+      { col: 6, from: 0, to: 8, kind: "main", no: "Etterhev", en: "Let rise again", tags: ["30–45 min"] },
+      { col: 7, from: 0, to: 9, kind: "main", no: "Pensle med sammenvispet egg og stek", en: "Brush with beaten egg and bake", tags: [{ no: "180 °C", en: "180 °C / 350 °F" }, "45–60 min"] },
+      { col: 8, from: 0, to: 9, kind: "final", no: "Avkjøl på rist", en: "Cool on a rack" }
+    ],
+    no: {
+      title: "Julekake", sub: "Julebrød med rosiner, sukat og kardemomme", main: "Deigen",
+      unit: "julekaker", count: "Antall julekaker", time: "Ca. 3 t",
+      facts: ["{n} {n|julekake|julekaker}", "Ca. 3 timer", "Ovn 180 °C"],
+      tips: [
+        ["Mer julesmak.", "Litt kanel og noen sitrondråper i deigen gir enda mer julesmak."],
+        ["Rosinene.", "Elt inn rosiner og sukat etter første heving, så hindrer de ikke hevingen."],
+        ["Er den ferdig?", "Bank lett under kaken. Den skal låte hult."]
+      ]
+    },
+    en: {
+      title: "Julekake", sub: "Christmas bread with raisins, candied peel and cardamom", main: "Dough",
+      unit: "loaves", count: "Number of loaves", time: "About 3 h",
+      facts: ["{n} {n|loaf|loaves}", "About 3 hours", "Oven 180 °C / 350 °F"],
+      tips: [
+        ["More Christmas.", "A little cinnamon and a few drops of lemon essence in the dough add even more Christmas flavour."],
+        ["The raisins.", "Knead in the raisins and peel after the first rise, so they don't hold back the rise."],
+        ["Is it done?", "Tap the bottom of the loaf. It should sound hollow."]
+      ]
+    }
+  },
+
+  {
+    id: "lussekatter", cat: "bake", group: "yeast", season: { no: "13. desember", en: "13 December" },
+    yield: { base: 30, step: 5 },
+    ing: [
+      { kind: "g", g: 100, perCup: 227, no: "smør", en: "butter" },
+      { kind: "liquid", ml: 500, no: "melk", en: "milk" },
+      { kind: "g1", g: 0.5, no: "safran", en: "saffron" },
+      { kind: "liquid", ml: 100, no: "sukker", en: "sugar" },
+      { kind: "g", g: 50, no: "fersk gjær", en: "fresh yeast" },
+      { kind: "g", g: 900, perCup: 125, no: "hvetemel", en: "all-⁠purpose flour" },
+      { kind: "count", v: 1, no: "egg (til pensling)", en: "egg (for brushing)" },
+      { kind: "liquid", ml: 100, no: "rosiner (til pynt)", en: "raisins (to decorate)" }
+    ],
+    steps: [
+      { col: 1, from: 0, to: 1, kind: "prep", no: "Smelt smøret, tilsett melken og varm til fingervarm", en: "Melt the butter, add the milk and warm to finger-warm", tags: [{ no: "ca. 37 °C", en: "37 °C / 98 °F" }] },
+      { col: 1, from: 2, to: 3, kind: "prep", no: "Knus safranen med litt av sukkeret i en morter", en: "Grind the saffron with a little of the sugar in a mortar" },
+      { col: 2, from: 0, to: 3, kind: "main", no: "Rør safran og sukker inn i den lune melken", en: "Stir the saffron sugar into the warm milk" },
+      { col: 3, from: 0, to: 4, kind: "main", no: "Rør ut gjæren i væsken", en: "Dissolve the yeast in the liquid" },
+      { col: 4, from: 0, to: 5, kind: "main", no: "Elt inn melet i tre omganger til en smidig, ikke for fast deig", en: "Knead in the flour in three rounds to a smooth, not too firm dough" },
+      { col: 5, from: 0, to: 5, kind: "main", no: "Hev tildekket til dobbel størrelse", en: "Cover and let rise until doubled", tags: [{ no: "ca. 45 min", en: "about 45 min" }] },
+      { col: 6, from: 0, to: 5, kind: "main", no: "Del i ca. {n} {n|bit|biter}, rull dem til pølser og form som S", en: "Divide into about {n} {n|piece|pieces}, roll into ropes and shape into S curls" },
+      { col: 7, from: 0, to: 5, kind: "main", no: "Etterhev tildekket", en: "Cover and let rise again", tags: [{ no: "ca. 30 min", en: "about 30 min" }] },
+      { col: 8, from: 0, to: 7, kind: "main", no: "Pensle med egg og trykk en rosin i hver krøll", en: "Brush with egg and press a raisin into each curl" },
+      { col: 9, from: 0, to: 7, kind: "main", no: "Stek midt i ovnen", en: "Bake in the middle of the oven", tags: [{ no: "225 °C", en: "225 °C / 440 °F" }, "10–15 min"] },
+      { col: 10, from: 0, to: 7, kind: "final", no: "Avkjøl på rist", en: "Cool on a rack" }
+    ],
+    no: {
+      title: "Lussekatter", sub: "Safranboller til Luciadagen", main: "Deigen",
+      unit: "lussekatter", count: "Antall lussekatter", time: "Ca. 2 t",
+      facts: ["Ca. {n} {n|lussekatt|lussekatter}", "Ca. 2 timer", "Ovn 225 °C"],
+      tips: [
+        ["Safran.", "Knus safranen med en sukkerbit eller litt sukker, så fordeler farge og smak seg jevnt."],
+        ["Honning.", "Du kan bytte ut sukkeret med like mye honning."],
+        ["Frysing.", "Lussekattene smaker best nystekte, men de fryser godt."]
+      ]
+    },
+    en: {
+      title: "Lussekatter", sub: "Saffron buns for Lucia Day", main: "Dough",
+      unit: "buns", count: "Number of buns", time: "About 2 h",
+      facts: ["Makes about {n}", "About 2 hours", "Oven 225 °C / 440 °F"],
+      tips: [
+        ["Saffron.", "Grind the saffron with a sugar cube or a little sugar so the colour and flavour spread evenly."],
+        ["Honey.", "You can swap the sugar for the same amount of honey."],
+        ["Freezing.", "Lussekatter are best freshly baked, but they freeze well."]
+      ]
+    }
+  },
+
+  {
+    id: "fastelavnsboller", cat: "bake", group: "yeast", season: { no: "Fastelavn", en: "Shrovetide" },
+    yield: { base: 15, step: 5 },
+    ing: [
+      { kind: "liquid", ml: 500, no: "melk", en: "milk" },
+      { kind: "g", g: 150, perCup: 227, no: "smør", en: "butter" },
+      { kind: "g", g: 125, perCup: 200, no: "sukker", en: "sugar" },
+      { kind: "g", g: 50, no: "fersk gjær", en: "fresh yeast" },
+      { kind: "g", g: 750, perCup: 125, no: "hvetemel", en: "all-⁠purpose flour" },
+      { kind: "tsp", v: 0.5, no: "malt kardemomme", en: "ground cardamom" },
+      { kind: "liquid", ml: 400, no: "kremfløte", en: "whipping cream" },
+      { kind: "tbsp", v: 2, no: "sukker (til kremen)", en: "sugar (for the cream)" },
+      { kind: "liquid", ml: 150, optional: true, no: "syltetøy (valgfritt)", en: "jam (optional)" },
+      { kind: "text", key: "taste", no: "melis (til pynt)", en: "icing sugar (to dust)" }
+    ],
+    steps: [
+      { col: 1, from: 0, to: 2, kind: "prep", no: "Varm opp til smøret er smeltet, avkjøl til fingervarm", en: "Heat until the butter melts, then cool to finger-warm", tags: [{ no: "ca. 37 °C", en: "37 °C / 98 °F" }] },
+      { col: 2, from: 0, to: 3, kind: "main", no: "Rør ut gjæren i væsken", en: "Dissolve the yeast in the liquid" },
+      { col: 2, from: 4, to: 5, kind: "prep", no: "Bland", en: "Mix" },
+      { col: 3, from: 0, to: 5, kind: "main", no: "Elt til en smidig deig og la den heve", en: "Knead to a smooth dough and let it rise", tags: ["30 min"] },
+      { col: 4, from: 0, to: 5, kind: "main", no: "Del deigen i {n} like store {n|bit|biter}, trill dem runde og legg dem på stekeplate med bakepapir", en: "Divide the dough into {n} equal {n|piece|pieces}, roll them round and place on lined baking sheets", tags: [{ no: "ca. 90 g per bolle", en: "about 90 g each" }] },
+      { col: 5, from: 0, to: 5, kind: "main", no: "Etterhev", en: "Let rise again", tags: [{ no: "ca. 40 min", en: "about 40 min" }] },
+      { col: 6, from: 0, to: 5, kind: "main", no: "Stek midt i ovnen til de er gylne", en: "Bake in the middle of the oven until golden", tags: [{ no: "220 °C", en: "220 °C / 425 °F" }, "10–12 min"] },
+      { col: 7, from: 0, to: 5, kind: "main", no: "Avkjøl helt", en: "Cool completely" },
+      { col: 7, from: 6, to: 7, kind: "prep", no: "Pisk til luftig krem", en: "Whip to soft peaks" },
+      { col: 8, from: 0, to: 8, kind: "main", pre: { no: "(Valgfritt: en skje syltetøy under kremen)", en: "(Optional: a spoonful of jam under the cream)" }, no: "Skjær av toppen og fyll bollene med krem", en: "Cut off the tops and fill the buns with cream" },
+      { col: 9, from: 0, to: 9, kind: "final", no: "Legg på lokket og sikt over melis", en: "Put the lids back on and dust with icing sugar" }
+    ],
+    no: {
+      title: "Fastelavnsboller", sub: "Boller med pisket krem til fastelavn", main: "Deigen",
+      unit: "boller", count: "Antall boller", time: "Ca. 2 t",
+      facts: ["{n} {n|bolle|boller}", "Ca. 2 timer", "Ovn 220 °C"],
+      tips: [
+        ["Helt kalde.", "Bollene må være helt kalde før du fyller dem, ellers smelter kremen."],
+        ["Mandelmasse.", "Mange bruker revet mandelmasse i stedet for syltetøy."],
+        ["Fastelavn.", "Fastelavnssøndag er sju uker før påske."]
+      ]
+    },
+    en: {
+      title: "Fastelavnsboller", sub: "Cream buns for Shrovetide", main: "Dough",
+      unit: "buns", count: "Number of buns", time: "About 2 h",
+      facts: ["{n} {n|bun|buns}", "About 2 hours", "Oven 220 °C / 425 °F"],
+      tips: [
+        ["Completely cold.", "The buns must be completely cold before filling, or the cream melts."],
+        ["Almond paste.", "Many people use grated almond paste instead of jam."],
+        ["Shrovetide.", "Shrove Sunday (fastelavnssøndag) is seven weeks before Easter."]
+      ]
+    }
+  }
+];
+const BY_ID = Object.fromEntries(RECIPES.map((r) => [r.id, r]));
+const LAYOUT = [
+  { cat: "bake", groups: ["cakes", "yeast"] },
+  { cat: "dinner", groups: ["stews", "pan"] }
+];
+const SEQUENCE = LAYOUT.flatMap((c) => c.groups
+  .flatMap((g) => RECIPES.filter((r) => r.group === g && !r.season))
+  .concat(RECIPES.filter((r) => r.cat === c.cat && r.season)));
+
+/* ---------- amounts ---------- */
+const FRACS = [[0, ""], [1 / 4, "¼"], [1 / 3, "⅓"], [1 / 2, "½"], [2 / 3, "⅔"], [3 / 4, "¾"], [1, ""]];
+
+function nearestFrac(x, thirds) {
+  const opts = thirds ? FRACS : FRACS.filter(([v]) => v !== 1 / 3 && v !== 2 / 3);
+  let whole = Math.floor(x);
+  const r = x - whole;
+  let best = opts[0];
+  for (const o of opts) if (Math.abs(o[0] - r) < Math.abs(best[0] - r)) best = o;
+  if (best[0] === 1) { whole += 1; best = FRACS[0]; }
+  const text = (whole > 0 || !best[1]) ? String(whole) + best[1] : best[1];
+  return { value: whole + best[0], text };
+}
+const QUARTER = { value: 0.25, text: "¼" };
+function spoon(x) { const q = nearestFrac(x, false); return q.value < 0.25 ? QUARTER : q; }
+function cup(x) { const q = nearestFrac(x, true); return q.value < 0.25 ? QUARTER : q; }
+function unitLabel(values, toQ, one, many) {
+  const qs = values.map(toQ);
+  return qs.map((q) => q.text).join("–") + NB + (qs[qs.length - 1].value > 1 ? many : one);
+}
+function roundG(x) { return Math.max(1, x < 30 ? Math.round(x) : Math.round(x / 5) * 5); }
+function grams(x) { return roundG(x) + NB + "g"; }
+function dec(x, L) { return String(x).replace(".", L.decimal); }
+function liters(ml, L) { return dec(Math.round(ml / 250) / 4, L) + NB + "l"; }
+
+function amount(spec, f, L) {
+  switch (spec.kind) {
+    case "liquid": {
+      const ml = spec.ml * f;
+      if (L.lang === "nb") {
+        if (ml >= 1000) return { main: liters(ml, L) };
+        const dl = ml / 100, step = dl < 3 ? 0.25 : 0.5;
+        return { main: dec(Math.max(step, Math.round(dl / step) * step), L) + NB + "dl" };
+      }
+      const alt = unitLabel([ml / 240], cup, "cup", "cups");
+      if (ml >= 1000) return { main: liters(ml, L), alt };
+      const unit = ml < 200 ? 5 : 25;
+      return { main: Math.max(unit, Math.round(ml / unit) * unit) + NB + "ml", alt };
+    }
+    case "g": {
+      const gs = [].concat(spec.g).map((g) => g * f);
+      const main = spec.kg && gs[0] >= 1000
+        ? gs.map((g) => dec(Math.round(g / 100) / 10, L)).join("–") + NB + "kg"
+        : gs.map(roundG).join("–") + NB + "g";
+      let alt = null;
+      if (L.lang === "en" && spec.perCup) alt = unitLabel(gs.map((g) => g / spec.perCup), cup, "cup", "cups");
+      if (L.lang === "en" && spec.perLb) alt = unitLabel(gs.map((g) => g / 453.6), spoon, "lb", "lb");
+      return { main, alt };
+    }
+    case "g1": {
+      const v = Math.max(0.1, Math.round(spec.g * f * 10) / 10);
+      return { main: dec(v, L) + NB + "g" };
+    }
+    case "tsp":
+    case "tbsp": {
+      const vs = [].concat(spec.v).map((v) => spoon(v * f).text);
+      return { main: vs.join("–") + NB + L.u[spec.kind] };
+    }
+    case "count": {
+      if (spec.half) {
+        const h = Math.max(0.5, Math.round(spec.v * f * 2) / 2);
+        const whole = Math.floor(h);
+        return { main: (whole ? String(whole) : "") + (h % 1 ? "½" : ""), value: h };
+      }
+      const v = Math.max(1, Math.round(spec.v * f));
+      return { main: String(v), value: v };
+    }
+    default:
+      return { main: L[spec.key], free: true };
+  }
+}
+
+/* Keep numbers with their units, and "ca."/"about" with their numbers. */
+const GLUE_NUM = /([\d½¼¾⅓⅔]) (?=(?:°|×|kg\b|g\b|dl\b|ml\b|l\b|min\b|cm\b|timer\b|time\b|t\b|h\b|hours?\b|ts\b|ss\b|tsp\b|tbsp\b|lb\b|in\b))/g;
+const GLUE_PRE = /(\b[Cc]a\.|\b[Aa]bout|≈|Ø) (?=[\d½])/g;
+function glue(s) { return s.replace(GLUE_NUM, "$1" + NB).replace(GLUE_PRE, "$1" + NB); }
+function fill(str, vars) {
+  return glue(str
+    .replace(/\{(\w+)\|([^|{}]*)\|([^{}]*)\}/g, (m, k, one, many) => (vars[k] === "1" ? one : many))
+    .replace(/\{(\w+)\}/g, (m, k) => (k in vars ? vars[k] : m)));
+}
+function tr(x, lang) { return typeof x === "string" ? x : x[lang]; }
+
+/* ---------- state ---------- */
+const state = { lang: "no", skin: "parchment", route: "home", f: {}, seasonOpen: false };
+const SKINS = ["parchment", "porcelain", "dark"];
+const MIN_F = 0.1, MAX_F = 10;
+const $ = (id) => document.getElementById(id);
+
+function load(key) { try { return localStorage.getItem(key); } catch (e) { return null; } }
+function save(key, value) { try { localStorage.setItem(key, String(value)); } catch (e) {} }
+
+function factorOf(r) { return state.f[r.id] || 1; }
+function countOf(r, f) { return Math.max(1, Math.round(r.yield.base * f)); }
+function maxCol(r) { return r.steps.reduce((m, s) => Math.max(m, s.col), 0); }
+function fmtFactor(f, L) { return dec(Math.round(f * 100) / 100, L); }
+
+function setFactor(r, f) {
+  state.f[r.id] = Math.min(MAX_F, Math.max(MIN_F, f));
+  save("rk-f-" + r.id, state.f[r.id]);
+  render();
+}
+
+/* ---------- rendering ---------- */
+function el(tag, cls, text) {
+  const n = document.createElement(tag);
+  if (cls) n.className = cls;
+  if (text != null) n.textContent = text;
+  return n;
+}
+function place(node, col, rowStart, rowEnd) {
+  node.style.gridColumn = String(col);
+  node.style.gridRow = rowStart + " / " + (rowEnd + 1);
+  return node;
+}
+
+// Lay out step cells plus blank cells, for both the full sheet and the miniatures.
+function stepCells(r, makeStep) {
+  const cols = maxCol(r);
+  const used = r.ing.map(() => Array(cols + 1).fill(false));
+  const cells = r.steps.map((s) => {
+    for (let i = s.from; i <= s.to; i++) used[i][s.col] = true;
+    return place(makeStep(s), 2 + s.col, 2 + s.from, 2 + s.to);
+  });
+  used.forEach((row, i) => {
+    for (let c = 1; c <= cols; c++) if (!row[c]) cells.push(place(el("span", "c empty"), 2 + c, 2 + i, 2 + i));
+  });
+  return cells;
+}
+
+function miniGrid(r) {
+  const cols = maxCol(r);
+  const g = el("span", "mini");
+  g.setAttribute("aria-hidden", "true");
+  g.style.gridTemplateColumns = "1.5fr repeat(" + cols + ", 1fr)";
+  g.style.gridTemplateRows = ".5fr repeat(" + r.ing.length + ", 1fr)";
+  const head = el("span", "mh");
+  head.style.gridColumn = "1 / -1";
+  head.style.gridRow = "1";
+  const cells = [head];
+  r.ing.forEach((_, i) => cells.push(place(el("span", "mi"), 1, 2 + i, 2 + i)));
+  cells.push(...stepCells(r, (s) => el("span", s.kind)));
+  cells.forEach((c) => c.classList.remove("c", "empty"));
+  g.append(...cells);
+  return g;
+}
+
+function renderChrome(L) {
+  document.documentElement.lang = L.lang;
+  document.documentElement.dataset.skin = state.skin;
+  $("slogan").textContent = L.slogan;
+  $("theme-group").setAttribute("aria-label", L.themeLabel);
+  document.querySelectorAll("button[data-skin]").forEach((b) => {
+    b.textContent = L.themes[b.dataset.skin];
+    b.setAttribute("aria-pressed", String(b.dataset.skin === state.skin));
+  });
+  document.querySelectorAll("button[data-lang]").forEach((b) => {
+    b.setAttribute("aria-pressed", String(b.dataset.lang === state.lang));
+  });
+}
+
+function entryCard(r) {
+  const R = r[state.lang];
+  const card = el("button", "entry");
+  card.type = "button";
+  card.dataset.route = r.id;
+  const text = el("span", "entry-text");
+  if (r.season) text.append(el("span", "entry-season", r.season[state.lang]));
+  text.append(el("span", "entry-title", R.title), el("span", "entry-sub", R.sub));
+  const meta = el("span", "entry-meta");
+  meta.append(el("span", null, glue(r.yield.base + " " + R.unit)), el("span", null, glue(R.time)));
+  const body = el("span", "entry-body");
+  body.append(text, meta);
+  card.append(miniGrid(r), body);
+  const li = el("li");
+  li.append(card);
+  return li;
+}
+
+function renderHome(L) {
+  $("intro-title").textContent = L.introTitle;
+  $("intro-text").textContent = L.intro;
+  const sections = LAYOUT.map(({ cat, groups }) => {
+    const sec = el("section", "group");
+    sec.append(el("h2", null, L.cats[cat]));
+    const cols = el("div", "cols");
+    groups.forEach((g) => {
+      const col = el("div", "col");
+      const ul = el("ul", "toc");
+      ul.append(...RECIPES.filter((r) => r.group === g && !r.season).map(entryCard));
+      col.append(el("h3", null, L.groups[g]), ul);
+      cols.append(col);
+    });
+    sec.append(cols);
+    const seasonal = RECIPES.filter((r) => r.cat === cat && r.season);
+    if (seasonal.length) {
+      const box = el("details", "season");
+      box.open = state.seasonOpen;
+      box.addEventListener("toggle", () => {
+        state.seasonOpen = box.open;
+        save("rk-season", box.open ? "1" : "0");
+      });
+      const list = el("ul", "toc season-list");
+      list.append(...seasonal.map(entryCard));
+      box.append(el("summary", null, L.seasonTitle + " (" + seasonal.length + ")"), list);
+      sec.append(box);
+    }
+    return sec;
+  });
+  $("groups").replaceChildren(...sections);
+  document.title = "Rutekokeboka";
+}
+
+function renderRecipe(r, L) {
+  const lang = state.lang;
+  const R = r[lang];
+  const f = factorOf(r);
+  const n = countOf(r, f);
+  const vars = Object.assign({ n: String(n), base: String(r.yield.base) }, r.vars ? r.vars(f, L) : {});
+  const cols = maxCol(r);
+
+  $("back-text").textContent = L.back;
+  $("title").textContent = R.title;
+  $("sub").textContent = R.sub;
+  $("facts").replaceChildren(...R.facts.map((t) => el("span", null, fill(t, vars))));
+
+  const howto = $("howto");
+  howto.replaceChildren(el("span", null, L.howto));
+  [["main", R.main], ["prep", L.legend[0]], ["final", L.legend[1]]].forEach(([k, label]) => {
+    const key = el("span", "key");
+    key.append(el("span", "sw " + k), el("span", null, label));
+    howto.append(key);
+  });
+
+  // Batch calculator
+  const step = r.yield.step, maxN = r.yield.base * MAX_F;
+  $("batch-label").textContent = R.count;
+  $("batch-minus").setAttribute("aria-label", L.fewer + " " + R.unit);
+  $("batch-plus").setAttribute("aria-label", L.more + " " + R.unit);
+  $("batch-minus").disabled = n <= step;
+  $("batch-plus").disabled = n >= maxN;
+  $("batch-n").max = String(maxN);
+  $("batch-f").setAttribute("aria-label", L.factor);
+  $("batch-reset").textContent = fill(L.reset, vars);
+  $("batch-reset").hidden = Math.abs(f - 1) < 1e-9;
+  if (document.activeElement !== $("batch-n")) $("batch-n").value = String(n);
+  if (document.activeElement !== $("batch-f")) $("batch-f").value = fmtFactor(f, L);
+
+  // Sheet
+  const sheet = $("sheet");
+  sheet.setAttribute("aria-label", R.title);
+  sheet.style.setProperty("--cols", String(cols));
+  const widths = Array.from({ length: cols }, () => "var(--step-w)");
+  r.steps.forEach((s) => { if (s.w) widths[s.col - 1] = s.w; });
+  sheet.style.gridTemplateColumns = "auto min-content " + widths.map((w) => "fit-content(" + w + ")").join(" ");
+  const cells = [
+    place(el("div", "c h", L.head[0]), 1, 1, 1),
+    place(el("div", "c h", L.head[1]), 2, 1, 1)
+  ];
+  for (let i = 1; i <= cols; i++) {
+    const h = place(el("div", "c h num", String(i)), 2 + i, 1, 1);
+    h.setAttribute("aria-label", L.stepLabel + " " + i);
+    cells.push(h);
+  }
+  r.ing.forEach((spec, i) => {
+    const row = 2 + i;
+    const a = amount(spec, f, L);
+    let name = spec[lang];
+    if (Array.isArray(name)) name = a.value > 1 ? name[1] : name[0];
+    const amt = el("div", "c amt" + (spec.optional ? " opt" : ""));
+    amt.append(el("span", a.free ? "free" : null, a.main));
+    if (a.alt) amt.append(el("small", null, a.alt));
+    cells.push(place(amt, 1, row, row));
+    // one word per line, but words in parentheses stay together
+    cells.push(place(el("div", "c ing" + (spec.optional ? " opt" : ""), name.replace(/ (?![^(]*\))/g, "\n").replace(/ /g, NB)), 2, row, row));
+  });
+  cells.push(...stepCells(r, (s) => {
+    const node = el("div", "c step " + s.kind);
+    if (s.pre) node.append(el("span", "pre", fill(tr(s.pre, lang), vars)));
+    node.append(el("span", null, fill(s[lang], vars)));
+    (s.tags || []).forEach((t) => node.append(el("span", "tag", fill(tr(t, lang), vars))));
+    return node;
+  }));
+  sheet.replaceChildren(...cells);
+
+  $("tips-title").textContent = L.tipsTitle;
+  $("tips").replaceChildren(...R.tips.map(([label, text]) => {
+    const li = el("li");
+    li.append(el("b", null, label), document.createTextNode(" " + fill(text, vars)));
+    return li;
+  }));
+
+  // Previous / next
+  const idx = SEQUENCE.indexOf(r);
+  const links = [];
+  [[idx - 1, L.prev, "← "], [idx + 1, L.next, ""]].forEach(([j, label, arrow]) => {
+    const other = SEQUENCE[j];
+    if (!other) return;
+    const a = el("button");
+    a.type = "button";
+    a.dataset.route = other.id;
+    a.append(el("small", null, label), el("span", null, arrow + other[lang].title + (arrow ? "" : " →")));
+    links.push(a);
+  });
+  $("pager").replaceChildren(...links);
+  document.title = R.title + " · Rutekokeboka";
+}
+
+function render() {
+  const L = UI[state.lang];
+  renderChrome(L);
+  const r = BY_ID[state.route];
+  $("home").hidden = !!r;
+  $("recipe").hidden = !r;
+  $("page").classList.toggle("is-home", !r);
+  if (r) renderRecipe(r, L); else renderHome(L);
+}
+
+/* ---------- start-up ---------- */
+function routeFromHash() {
+  let h = "";
+  try { h = decodeURIComponent((location.hash || "").slice(1)); } catch (e) {}
+  if (h === "no" || h === "en") { state.lang = h; return "home"; }
+  return BY_ID[h] ? h : "home";
+}
+
+const savedLang = load("rk-lang") || load("hveteboller-lang");
+if (savedLang === "no" || savedLang === "en") state.lang = savedLang;
+const savedSkin = load("rk-skin") || load("hveteboller-skin");
+if (SKINS.includes(savedSkin)) {
+  state.skin = savedSkin;
+} else {
+  const hostTheme = document.documentElement.getAttribute("data-theme");
+  const systemDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  state.skin = hostTheme === "dark" || (!hostTheme && systemDark) ? "dark" : "parchment";
+}
+state.seasonOpen = load("rk-season") === "1";
+RECIPES.forEach((r) => {
+  const saved = parseFloat(load("rk-f-" + r.id));
+  if (saved >= MIN_F && saved <= MAX_F) state.f[r.id] = saved;
+});
+if (!state.f.hveteboller) {
+  const oldBuns = parseInt(load("hveteboller-buns"), 10);
+  if (oldBuns >= 1 && oldBuns <= 200) state.f.hveteboller = oldBuns / 20;
+}
+state.route = routeFromHash();
+
+function go(route) {
+  state.route = BY_ID[route] ? route : "home";
+  render();
+  window.scrollTo(0, 0);
+  try {
+    history.replaceState(null, "", state.route === "home" ? location.pathname + location.search : "#" + state.route);
+  } catch (err) {}
+}
+document.addEventListener("click", (e) => {
+  const target = e.target.closest("[data-route]");
+  if (!target) return;
+  e.preventDefault();
+  go(target.dataset.route);
+});
+
+window.addEventListener("hashchange", () => {
+  state.route = routeFromHash();
+  render();
+  window.scrollTo(0, 0);
+});
+
+document.querySelectorAll("button[data-lang]").forEach((b) => {
+  b.addEventListener("click", () => {
+    state.lang = b.dataset.lang;
+    save("rk-lang", state.lang);
+    render();
+  });
+});
+document.querySelectorAll("button[data-skin]").forEach((b) => {
+  b.addEventListener("click", () => {
+    state.skin = b.dataset.skin;
+    save("rk-skin", state.skin);
+    render();
+  });
+});
+
+function current() { return BY_ID[state.route]; }
+
+$("batch-minus").addEventListener("click", () => {
+  const r = current(); if (!r) return;
+  const step = r.yield.step, n = countOf(r, factorOf(r));
+  if (n > step) setFactor(r, (n - (n % step || step)) / r.yield.base);
+});
+$("batch-plus").addEventListener("click", () => {
+  const r = current(); if (!r) return;
+  const step = r.yield.step, n = countOf(r, factorOf(r));
+  setFactor(r, (n + (step - (n % step))) / r.yield.base);
+});
+$("batch-reset").addEventListener("click", () => { const r = current(); if (r) setFactor(r, 1); });
+
+$("batch-n").addEventListener("input", (e) => {
+  const r = current(); if (!r) return;
+  const v = parseInt(e.target.value, 10);
+  if (v >= 1 && v <= r.yield.base * MAX_F) setFactor(r, v / r.yield.base);
+});
+$("batch-f").addEventListener("input", (e) => {
+  const r = current(); if (!r) return;
+  const v = parseFloat(e.target.value.replace(",", "."));
+  if (v >= MIN_F && v <= MAX_F) setFactor(r, v);
+});
+["change", "blur"].forEach((type) => {
+  $("batch-n").addEventListener(type, render);
+  $("batch-f").addEventListener(type, () => {
+    const r = current();
+    if (r) $("batch-f").value = fmtFactor(factorOf(r), UI[state.lang]);
+  });
+});
+$("batch-f").addEventListener("keydown", (e) => {
+  if (e.key === "Enter") e.target.blur();
+});
+
+render();
+</script>
