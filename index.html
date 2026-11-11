@@ -457,7 +457,7 @@ html[data-skin="arcade"] .entry:hover { box-shadow: 0 0 0 1px var(--band), 0 0 1
 html[data-skin="arcade"] .sheet { box-shadow: 0 0 0 1px rgba(62, 242, 255, .35), 0 0 22px rgba(255, 46, 154, .25); }
 html[data-skin="arcade"] .seg button[aria-pressed="true"], html[data-skin="arcade"] .edit-btn[aria-pressed="true"] { box-shadow: 0 0 10px rgba(255, 46, 154, .6); }
 @media screen {
-  html[data-skin="arcade"] body::after {
+  html[data-skin="arcade"]:not([data-scan="off"]) body::after {
     content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 50;
     background: repeating-linear-gradient(to bottom, rgba(0, 0, 0, .22) 0 1px, transparent 1px 3px);
   }
@@ -585,6 +585,7 @@ const UI = {
     head: ["Mengde", "Ingrediens"], stepLabel: "Trinn",
     fewer: "Færre", more: "Flere", factor: "Gang oppskriften med", reset: "Tilbake til {base}",
     themeLabel: "Tema", themes: { parchment: "Pergament", porcelain: "Porselen", dark: "Mørk", arcade: "Arkade" },
+    scanOff: "Klikk igjen for å skru av skannelinjene", scanOn: "Klikk igjen for å skru på skannelinjene",
     tipsTitle: "Tips",
     edit: "Rediger tabellen", editDone: "Ferdig med å redigere",
     editHint: "Klikk i en celle for å endre teksten, eller skriv inn en ny mengde. Mengdene gjelder grunnoppskriften ({yield}). Tekst i {klammer} fylles inn automatisk. Endringene lagres i denne nettleseren – eksporter dem for å ta vare på dem.",
@@ -608,6 +609,7 @@ const UI = {
     head: ["Amount", "Ingredient"], stepLabel: "Step",
     fewer: "Fewer", more: "More", factor: "Multiply the recipe by", reset: "Reset to {base}",
     themeLabel: "Theme", themes: { parchment: "Parchment", porcelain: "Porcelain", dark: "Dark", arcade: "Arcade" },
+    scanOff: "Click again to turn the scanlines off", scanOn: "Click again to turn the scanlines on",
     tipsTitle: "Tips",
     edit: "Edit table", editDone: "Done editing",
     editHint: "Click a cell to change its text, or type a new amount. Amounts are for the base recipe ({yield}). Text in {braces} is filled in automatically. Changes are kept in this browser – export them to keep them safe.",
@@ -2153,11 +2155,15 @@ function miniGrid(r) {
 function renderChrome(L) {
   document.documentElement.lang = L.lang;
   document.documentElement.dataset.skin = state.skin;
+  document.documentElement.dataset.scan = state.scan ? "on" : "off";
   $("slogan").textContent = L.slogan;
   $("theme-group").setAttribute("aria-label", L.themeLabel);
   document.querySelectorAll("button[data-skin]").forEach((b) => {
     b.textContent = L.themes[b.dataset.skin];
     b.setAttribute("aria-pressed", String(b.dataset.skin === state.skin));
+    if (b.dataset.skin === "arcade") {
+      if (state.skin === "arcade") b.title = state.scan ? L.scanOff : L.scanOn; else b.removeAttribute("title");
+    }
   });
   document.querySelectorAll("button[data-lang]").forEach((b) => {
     b.setAttribute("aria-pressed", String(b.dataset.lang === state.lang));
@@ -2608,6 +2614,7 @@ function routeFromHash() {
 const savedLang = load("rk-lang") || load("hveteboller-lang");
 if (savedLang === "no" || savedLang === "en") state.lang = savedLang;
 const savedSkin = load("rk-skin") || load("hveteboller-skin");
+state.scan = load("rk-scan") !== "0";
 if (SKINS.includes(savedSkin)) {
   state.skin = savedSkin;
 } else {
@@ -2676,8 +2683,14 @@ document.querySelectorAll("button[data-lang]").forEach((b) => {
 });
 document.querySelectorAll("button[data-skin]").forEach((b) => {
   b.addEventListener("click", () => {
-    state.skin = b.dataset.skin;
-    save("rk-skin", state.skin);
+    // clicking Arkade while it is already on turns the CRT scanlines on or off
+    if (b.dataset.skin === "arcade" && state.skin === "arcade") {
+      state.scan = !state.scan;
+      save("rk-scan", state.scan ? "1" : "0");
+    } else {
+      state.skin = b.dataset.skin;
+      save("rk-skin", state.skin);
+    }
     render();
   });
 });
