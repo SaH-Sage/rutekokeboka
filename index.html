@@ -2165,9 +2165,9 @@ function renderChrome(L) {
 }
 
 /* ---------- photos ----------
-   Put a photo in the folder "bilder" next to this page, named after the recipe's id,
-   e.g. bilder/hveteboller.jpg. The first of these endings that exists is used. */
-const PHOTO_DIR = "bilder/";
+   Put a photo in the folder "dish-images" next to this page, named after the recipe's id,
+   e.g. dish-images/hveteboller.jpg. The first of these endings that exists is used. */
+const PHOTO_DIR = "dish-images/";
 const PHOTO_EXT = ["jpg", "jpeg", "webp", "png"];
 const photoCache = {};
 function findPhoto(r) {
